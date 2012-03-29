@@ -1,26 +1,33 @@
 class Symbol(str): pass
 class List(list): pass
+class Atom(object): pass
+class Number(Atom, int): pass
+class String(Atom, str): pass
+
+funs = {
+	'+': sum,
+}
 
 def eval(sexp):
-	try:
+	if isinstance(sexp, List):
 		if len(sexp) == 0:
 			raise ValueError("Missing function expression")
-	except:
 
+		vals = [eval(i) for i in sexp]
+		import pytest; pytest.set_trace()
+		fun = vals[0]
+		return fun(*vals[1:])
+
+	elif isinstance(sexp, Symbol):
+		return funs[sexp]
+
+	elif isinstance(sexp, Atom):
+		return sexp
 	
 	return sexp
 
 def read(tokens):
 	'''Lisp reader
-
-	>>> read(['1'])
-	1
-
-	>>> read(['(', '1', '2', ')'])
-	[1, 2]
-
-	>>> read(['(', '+', '1', '2', ')'])
-	['+', 1, 2]
 	'''
 
 	try:
@@ -30,7 +37,6 @@ def read(tokens):
 		raise SyntaxError("Unexpected EOF")
 
 	if tok == '(':
-		import pdb; pdb.set_trace()
 		try:
 			end = tokens.index(')')
 		except ValueError:
@@ -39,14 +45,14 @@ def read(tokens):
 		in_toks = tokens[:end]
 
 		exp = List()
-		while in_toks: # depends on mutation inside parse(). nasty
+		while in_toks:
 			exp.append(read(in_toks))
-			exp.pop(0)
+			in_toks.pop(0)
 
 		return exp
 
 	try:
-		atom = int(tok)
+		atom = Number(tok)
 	except ValueError:
 		return Symbol(tok)
 	else:
@@ -55,9 +61,6 @@ def read(tokens):
 def tokenize(source):
 	'''Split by parens, consider commas whitespace
 	Inspired by Peter Norvig's lis.py
-
-	>>> tokenize("(1, 2)")
-	['(', '1', '2', ')']
 	'''
 
 	tokens = {
@@ -70,7 +73,3 @@ def tokenize(source):
 		source = source.replace(tok, rep)
 
 	return source.split()
-
-if __name__ == '__main__':
-	import doctest
-	doctest.testmod()
