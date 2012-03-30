@@ -2,3 +2,4 @@ syntax: glob
 
 venv
 *.pyc
+*.sublime-*
