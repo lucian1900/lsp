@@ -1,3 +1,5 @@
+from py.test import raises
+
 from lsp import tokenize, read, eval, Symbol, List
 
 
@@ -25,5 +27,15 @@ def test_eval_atom():
     assert eval(1) == 1
 
 
+def test_eval_symbol():
+    assert eval('+')
+
+    with raises(RuntimeError):
+        assert eval('missing')
+
+
 def test_eval_func():
+    with raises(TypeError):
+        assert eval(List([1, 2]))
+
     assert eval(List([Symbol('+'), 1, 2])) == 3
