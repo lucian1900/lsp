@@ -20,7 +20,8 @@ def test_read_func():
 
 
 def test_read_unmatched():
-    pass
+    with raises(SyntaxError):
+        assert read(['('])
 
 
 def test_eval_atom():
@@ -31,7 +32,7 @@ def test_eval_symbol():
     assert eval('+')
 
     with raises(RuntimeError):
-        assert eval('missing')
+        assert eval(List([Symbol('foo')]))
 
 
 def test_eval_func():
