@@ -5,8 +5,11 @@ class Number(Atom, int): pass
 class String(Atom, str): pass
 
 
+def plus(*args):
+    return sum(args)
+
 funs = {
-    '+': sum,
+    '+': plus,
 }
 
 
@@ -17,7 +20,7 @@ def eval(sexp):
 
         vals = [eval(i) for i in sexp]
         fun = vals[0]
-        return fun(vals[1:])
+        return fun(*vals[1:])
 
     elif isinstance(sexp, Symbol):
         return funs[sexp]
