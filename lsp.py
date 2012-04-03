@@ -8,7 +8,15 @@ class String(Atom, str): pass
 def plus(*args):
     return sum(args)
 
-funs = {
+
+macros = {
+    'if': '',
+    'fn': '',
+    'def': '',
+    'quote': '',
+}
+
+ns = {
     '+': plus,
 }
 
@@ -18,12 +26,24 @@ def eval(sexp):
         if len(sexp) == 0:
             raise ValueError("Missing function expression")
 
-        vals = [eval(i) for i in sexp]
-        fun = vals[0]
-        return fun(*vals[1:])
+        if sexp[0] in macros:
+            m = macros[sexp[0]]
+            return m(sexp[1:])
+
+        else:
+            vals = [eval(i) for i in sexp]
+            fun = vals[0]
+
+            if not hasattr(fun, '__call__'):
+                raise TypeError("Expected function, got: {0}".format(fun))
+
+            return fun(*vals[1:])
 
     elif isinstance(sexp, Symbol):
-        return funs[sexp]
+        try:
+            return ns[sexp]
+        except KeyError:
+            raise RuntimeError("Unbound symbol: {0}".format(sexp))
 
     elif isinstance(sexp, Atom):
         return sexp
