@@ -51,6 +51,10 @@ def eval(sexp):
     return sexp
 
 
+def rindex(it, val):
+    return len(it) - list(reversed(it)).index(val) - 1
+
+
 def read(tokens):
     try:
         tok = tokens[0]
@@ -60,7 +64,7 @@ def read(tokens):
 
     if tok == '(':
         try:
-            end = tokens.index(')')
+            end = rindex(tokens, ')')
         except ValueError:
             raise SyntaxError("Expected ')'")
 
@@ -96,3 +100,7 @@ def lex(source):
         source = source.replace(sep, rep)
 
     return source.split()
+
+
+def lsp(source):
+    return eval(read(lex(source)))

@@ -14,6 +14,9 @@ def test_read_atom():
 def test_read_list():
     assert read(['(', '1', '2', ')']) == [1, 2]
 
+    assert read(['(', '1', '(', '2', '3', ')', ')']) == [1, [2, 3]]
+    assert read(['(', '(', '1', '2', ')', '3', ')']) == [1, [2, 3]]
+
 
 def test_read_func():
     assert read(['(', '+', '1', '2', ')']) == ['+', 1, 2]
