@@ -1,3 +1,8 @@
+import re
+
+
+comment_pattern = re.compile(r';.*\n')
+
 class Symbol(str): pass
 class List(list): pass
 class Atom(object): pass
@@ -73,7 +78,8 @@ def read(tokens):
         exp = List()
         while in_toks:
             exp.append(read(in_toks))
-            in_toks.pop(0)
+
+            in_toks.pop(0)  # TODO pop nested parens too
 
         return exp
 
@@ -95,6 +101,8 @@ def lex(source):
         ')': ' ) ',
         ',': ' ',
     }
+
+    source = re.sub(comment_pattern, ' ', source)
 
     for sep, rep in separators.items():
         source = source.replace(sep, rep)

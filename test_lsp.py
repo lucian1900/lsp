@@ -3,8 +3,12 @@ from py.test import raises
 from lsp import lex, read, eval, Symbol, List
 
 
-def test_tokenize():
+def test_lex():
     assert lex("(1, 2)") == ['(', '1', '2', ')']
+
+
+def test_lex_comment():
+    assert lex("1; foo\n2") == lex("1\n2")
 
 
 def test_read_atom():
