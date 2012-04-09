@@ -42,9 +42,21 @@ def def_macro(body):
     return val
 
 
+class fn_macro(object):
+    def __init__(self, body):
+        self.args = body[0]
+        self.body = body[1:]
+
+    def __call__(self, *args):
+        if len(args) != len(self.args):
+            raise RuntimeError("Wrong number of args")
+
+        return eval(self.body)
+
+
 macros = {
     'if': if_macro,
-    'fn': '',
+    'fn': fn_macro,
     'def': def_macro,
     'quote': '',
 }
