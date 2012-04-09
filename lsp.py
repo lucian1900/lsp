@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import re
 import sys
 
@@ -24,8 +26,15 @@ def minus(*args):
     return args[0] - sum(args[1:])
 
 
+def if_macro(body):
+    if eval(body[0]):
+        return eval(body[1])
+    else:
+        return eval(body[2])
+
+
 macros = {
-    'if': '',
+    'if': if_macro,
     'fn': '',
     'def': '',
     'quote': '',
@@ -90,7 +99,7 @@ def read(tokens):
 
         while in_toks:
             if in_toks[0] != '(':
-                exp.append(read(in_toks[0]))
+                exp.append(read(in_toks[:1]))
                 in_toks.pop(0)
             else:
                 end = rindex(in_toks, ')')
