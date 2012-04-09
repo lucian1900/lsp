@@ -79,7 +79,13 @@ def read(tokens):
         while in_toks:
             exp.append(read(in_toks))
 
-            in_toks.pop(0)  # TODO pop nested parens too
+            start = 0
+            if in_toks[0] == '(':
+                end = in_toks.index(')')
+            else:
+                end = 1
+
+            del in_toks[start:end]
 
         return exp
 
