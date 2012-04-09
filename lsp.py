@@ -1,5 +1,5 @@
 import re
-
+import sys
 
 comment_pattern = re.compile(r';.*\n')
 
@@ -23,6 +23,7 @@ macros = {
 
 ns = {
     '+': plus,
+    'exit': sys.exit,
 }
 
 
@@ -106,7 +107,7 @@ def lex(source):
         ',': ' ',
     }
 
-    source = re.sub(comment_pattern, ' ', source)
+    source = re.sub(comment_pattern, ' \n', source)
 
     for sep, rep in separators.items():
         source = source.replace(sep, rep)
@@ -116,3 +117,22 @@ def lex(source):
 
 def lsp(source):
     return eval(read(lex(source)))
+
+
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        while True:
+            try:
+                print lsp(raw_input('> '))
+            except Exception, e:
+                print e
+    elif len(sys.argv) == 2:
+        with open(sys.argv[1]) as f:
+            print lsp(f.read())
+    elif len(sys.argv) == 3:
+        if sys.argv[1] == '-c':
+            print lsp(sys.argv[2])
+        else:
+            print "Only -c supported so far"
+    else:
+        print "Wrong args"
