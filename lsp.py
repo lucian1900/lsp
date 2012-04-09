@@ -74,8 +74,18 @@ def read(tokens):
             raise SyntaxError("Expected ')'")
 
         in_toks = tokens[:end]
+        exp = List()
 
-        return List(read(i) for i in in_toks)
+        while in_toks:
+            if in_toks[0] != '(':
+                exp.append(read(in_toks[0]))
+                in_toks.pop(0)
+            else:
+                end = rindex(in_toks, ')')
+                exp.append(read(in_toks))
+                del in_toks[:end + 1]
+
+        return exp
 
     try:
         atom = Number(tok)
