@@ -13,6 +13,12 @@ class String(Atom, str): pass
 def plus(*args):
     return sum(args)
 
+def minus(*args):
+    if len(args) == 0:
+        return 0
+
+    return args[0] - sum(args[1:])
+
 
 macros = {
     'if': '',
@@ -23,6 +29,7 @@ macros = {
 
 ns = {
     '+': plus,
+    '-': minus,
     'exit': sys.exit,
 }
 
