@@ -75,19 +75,7 @@ def read(tokens):
 
         in_toks = tokens[:end]
 
-        exp = List()
-        while in_toks:
-            exp.append(read(in_toks))
-
-            start = 0
-            if in_toks[0] == '(':
-                end = in_toks.index(')')
-            else:
-                end = 1
-
-            del in_toks[start:end]
-
-        return exp
+        return List(read(i) for i in in_toks)
 
     try:
         atom = Number(tok)
