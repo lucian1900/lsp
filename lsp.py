@@ -88,6 +88,9 @@ def read(tokens):
 
         return exp
 
+    if len(tok) >= 2 and tok[0] == '"' and tok[-1] == '"':
+        return String(tok)
+
     try:
         atom = Number(tok)
     except ValueError:
@@ -107,7 +110,7 @@ def lex(source):
         ',': ' ',
     }
 
-    source = re.sub(comment_pattern, ' \n', source)
+    source = re.sub(comment_pattern, '\n', source)
 
     for sep, rep in separators.items():
         source = source.replace(sep, rep)
