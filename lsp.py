@@ -33,17 +33,25 @@ def if_macro(body):
         return eval(body[2])
 
 
+def def_macro(body):
+    name = body[0]
+    val = eval(body[1])
+
+    env[name] = eval(val)
+
+    return val
+
+
 macros = {
     'if': if_macro,
     'fn': '',
-    'def': '',
+    'def': def_macro,
     'quote': '',
 }
 
-ns = {
+env = {
     '+': plus,
     '-': minus,
-    'exit': sys.exit,
 }
 
 
@@ -67,7 +75,7 @@ def eval(sexp):
 
     elif isinstance(sexp, Symbol):
         try:
-            return ns[sexp]
+            return env[sexp]
         except KeyError:
             raise RuntimeError("Unbound symbol: {0}".format(sexp))
 
