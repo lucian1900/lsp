@@ -13,9 +13,13 @@ class String(Atom, str): pass
 def plus(*args):
     return sum(args)
 
+
 def minus(*args):
     if len(args) == 0:
-        return 0
+        raise RuntimeError('expects at least 1 arguments')
+
+    elif len(args) == 1:
+        return -args[0]
 
     return args[0] - sum(args[1:])
 
