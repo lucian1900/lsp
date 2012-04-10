@@ -1,6 +1,6 @@
 from py.test import raises
 
-from lsp import lex, read, eval, Symbol, List
+from lsp import lex, read, eval, Symbol, List, lsp
 
 
 def test_lex():
@@ -48,3 +48,12 @@ def test_eval_func():
         assert eval(List([1, 2]))
 
     assert eval(List([Symbol('+'), 1, 2])) == 3
+
+
+def test_if():
+    assert lsp('(if 1 2 3)') == 2
+    assert lsp('(if 0 2 3)') == 3
+
+
+def test_def():
+    assert lsp('(def a 1) \n a') == 1

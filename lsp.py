@@ -53,7 +53,7 @@ class fn_macro(object):
         if len(args) != len(self.args):
             raise RuntimeError("Wrong number of args")
 
-        return eval(self.body)
+        return eval(self.body[0])
 
 
 macros = {
