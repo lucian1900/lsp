@@ -14,18 +14,19 @@ class Number(Atom, int): pass
 class String(Atom, str): pass
 
 
-def plus(*args):
-    return sum(args)
+class Env(dict):
+    def __init__(self, ns, parent=None):
+        super(Env, self).__init__(ns)
+        self.parent = None
 
-
-def minus(*args):
-    if len(args) == 0:
-        raise RuntimeError('expects at least 1 arguments')
-
-    elif len(args) == 1:
-        return -args[0]
-
-    return args[0] - sum(args[1:])
+    def __getitem__(self, key):
+        try:
+            return super(Env, self).__getitem__(key)
+        except KeyError, e:
+            if self.parent:
+                return self.parent[key]
+            else:
+                raise e
 
 
 def if_macro(body):
@@ -56,6 +57,20 @@ class fn_macro(object):
         return eval(self.body[0])
 
 
+def plus(*args):
+    return sum(args)
+
+
+def minus(*args):
+    if len(args) == 0:
+        raise RuntimeError('expects at least 1 arguments')
+
+    elif len(args) == 1:
+        return -args[0]
+
+    return args[0] - sum(args[1:])
+
+
 macros = {
     'if': if_macro,
     'fn': fn_macro,
@@ -63,13 +78,13 @@ macros = {
     'quote': '',
 }
 
-env = {
+env = Env({
     '+': plus,
     '-': minus,
-}
+})
 
 
-def eval(sexp):
+def eval(sexp, env=env):
     if isinstance(sexp, List):
         if len(sexp) == 0:
             raise ValueError("Missing function expression")
