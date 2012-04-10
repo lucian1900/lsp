@@ -74,7 +74,7 @@ def eval(sexp):
         if len(sexp) == 0:
             raise ValueError("Missing function expression")
 
-        if sexp[0] in macros:
+        if isinstance(sexp[0], Symbol) and sexp[0] in macros:
             m = macros[sexp[0]]
             return m(sexp[1:])
 

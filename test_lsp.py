@@ -57,3 +57,8 @@ def test_if():
 
 def test_def():
     assert lsp('(def a 1) \n a') == 1
+
+
+def test_fn():
+    assert lsp('((fn () 1))') == 1
+    assert lsp('((fn (x) x) 1)') == 1
