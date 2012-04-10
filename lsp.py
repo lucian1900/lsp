@@ -54,7 +54,9 @@ class fn_macro(object):
         if len(args) != len(self.args):
             raise RuntimeError("Wrong number of args")
 
-        return eval(self.body[0])
+        ns = Env(zip(self.args, args), parent=env)
+
+        return eval(self.body[0], ns)
 
 
 def plus(*args):
