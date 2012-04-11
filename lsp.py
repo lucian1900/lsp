@@ -83,6 +83,7 @@ macros = {
 env = Env({
     '+': plus,
     '-': minus,
+    'exit': sys.exit,
 })
 
 
