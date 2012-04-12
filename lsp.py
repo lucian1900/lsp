@@ -4,9 +4,6 @@ import re
 import sys
 
 
-comment_pattern = re.compile(r';.*\n')
-
-
 class Symbol(str): pass
 class List(list): pass
 class Atom(object): pass
@@ -170,7 +167,7 @@ def lex(source):
         ',': ' ',
     }
 
-    source = re.sub(comment_pattern, '\n', source)
+    source = re.sub(r';.*(\n|$)', '\n', source)
 
     for sep, rep in separators.items():
         source = source.replace(sep, rep)

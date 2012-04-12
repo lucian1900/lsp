@@ -9,6 +9,8 @@ def test_lex():
 
 def test_lex_comment():
     assert lex("1; foo\n2") == lex("1\n2")
+    assert lex('; 1') == lex('')
+    assert lex(';') == lex('')
 
 
 def test_read_atom():
@@ -29,8 +31,8 @@ def test_read_unmatched():
 
 
 def test_read_func():
-    assert read('(fn (x) (+ x 1))') == ['fn', ['x'], ['+', 'x', 1]]
     assert read('(+ 1 2)') == ['+', 1, 2]
+    assert read('(fn (x) (+ x 1))') == ['fn', ['x'], ['+', 'x', 1]]
 
 
 def test_eval_atom():
@@ -63,6 +65,7 @@ def test_def():
 def test_fn():
     assert lsp('((fn () 1))') == 1
     assert lsp('((fn (x) x) 1)') == 1
+    assert lsp('((fn (x) (+ x 1)) 1)') == 2
 
 
 def test_defn():
