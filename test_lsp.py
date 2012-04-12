@@ -1,6 +1,6 @@
 from py.test import raises
 
-from lsp import lex, read, eval, Symbol, List, lsp
+from lsp import lex, parse, read, eval, Symbol, List, lsp
 
 
 def test_lex():
@@ -12,24 +12,25 @@ def test_lex_comment():
 
 
 def test_read_atom():
-    assert read(['1']) == 1
+    assert parse(['1']) == 1
 
 
 def test_read_list():
-    assert read(['(', '1', '2', ')']) == [1, 2]
+    assert parse(['(', '1', '2', ')']) == [1, 2]
 
-    assert read(['(', '1', '(', '2', '3', ')', ')']) == [1, [2, 3]]
-    assert read(['(', '(', '1', '2', ')', '3', ')']) == [[1, 2], 3]
-    assert read(['(', '1', '(', '2', ')', '3', ')']) == [1, [2], 3]
-
-
-def test_read_func():
-    assert read(['(', '+', '1', '2', ')']) == ['+', 1, 2]
+    assert parse(['(', '1', '(', '2', '3', ')', ')']) == [1, [2, 3]]
+    assert parse(['(', '(', '1', '2', ')', '3', ')']) == [[1, 2], 3]
+    assert parse(['(', '1', '(', '2', ')', '3', ')']) == [1, [2], 3]
 
 
 def test_read_unmatched():
     with raises(SyntaxError):
-        assert read(['('])
+        assert parse(['('])
+
+
+def test_read_func():
+    assert read('(fn (x) (+ x 1))') == ['fn', ['x'], ['+', 'x', 1]]
+    assert read('(+ 1 2)') == ['+', 1, 2]
 
 
 def test_eval_atom():

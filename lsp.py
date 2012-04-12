@@ -121,7 +121,7 @@ def rindex(it, val):
     return len(it) - list(reversed(it)).index(val) - 1
 
 
-def read(tokens):
+def parse(tokens):
     try:
         tok = tokens[0]
         tokens = tokens[1:]
@@ -139,11 +139,11 @@ def read(tokens):
 
         while in_toks:
             if in_toks[0] != '(':
-                exp.append(read(in_toks[:1]))
+                exp.append(parse(in_toks[:1]))
                 in_toks.pop(0)
             else:
                 end = rindex(in_toks, ')')
-                exp.append(read(in_toks))
+                exp.append(parse(in_toks))
                 del in_toks[:end + 1]
 
         return exp
@@ -178,8 +178,12 @@ def lex(source):
     return source.split()
 
 
+def read(source):
+    return parse(lex(source))
+
+
 def lsp(source):
-    return eval(read(lex(source)))
+    return eval(parse(lex(source)))
 
 
 if __name__ == '__main__':
@@ -191,7 +195,7 @@ if __name__ == '__main__':
                 print e
     elif len(sys.argv) == 2:
         with open(sys.argv[1]) as f:
-            print lsp(f.read())
+            print lsp(f.parse())
     elif len(sys.argv) == 3:
         if sys.argv[1] == '-c':
             print lsp(sys.argv[2])
