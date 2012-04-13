@@ -94,7 +94,7 @@ def eval(sexp, env=env):
             return m(sexp[1:])
 
         else:
-            vals = [eval(i) for i in sexp]
+            vals = [eval(i, env) for i in sexp]
             fun = vals[0]
 
             if not hasattr(fun, '__call__'):
