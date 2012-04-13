@@ -55,6 +55,9 @@ class fn_macro(object):
 
         return eval(self.body[0], ns)
 
+    def __repr__(self):
+        return '<lsp.lambda object at {0}>'.format(hex(id(self)))
+
 
 def plus(*args):
     return sum(args)
