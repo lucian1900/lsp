@@ -1,6 +1,6 @@
 from py.test import raises
 
-from lsp import lex, parse, read, eval, Symbol, List, lsp
+from lsp import lex, parse, read, eval, Symbol, List, lsp, Env
 
 
 def test_lex():
@@ -61,6 +61,15 @@ def test_if():
 def test_def():
     lsp('(def a 1)')
     assert lsp('a') == 1
+
+
+def test_env():
+    glob = Env({'x': 1})
+    loc = Env({'y': 2}, parent=glob)
+
+    assert glob['x'] == 1
+    assert loc['y'] == 2
+    assert loc['x'] == 1
 
 
 def test_fn():

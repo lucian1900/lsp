@@ -14,7 +14,7 @@ class String(Atom, str): pass
 class Env(dict):
     def __init__(self, ns, parent=None):
         super(Env, self).__init__(ns)
-        self.parent = None
+        self.parent = parent
 
     def __getitem__(self, key):
         try:
