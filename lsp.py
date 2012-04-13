@@ -121,9 +121,15 @@ def parse(tokens):
     tok = tokens.pop(0)
     if tok == '(':
         exp = List()
-        while tokens[0] != ')':
-            exp.append(parse(tokens))
-        tokens.pop(0)
+
+        try:
+            while tokens[0] != ')':
+                exp.append(parse(tokens))
+        except IndexError:
+            raise SyntaxError("Expected ')'")
+
+        tokens.pop(0)  # Remove ')'
+
         return exp
 
     if tok == ')':
