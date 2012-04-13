@@ -114,36 +114,20 @@ def eval(sexp, env=env):
     return sexp
 
 
-def rindex(it, val):
-    return len(it) - list(reversed(it)).index(val) - 1
-
-
 def parse(tokens):
-    try:
-        tok = tokens[0]
-        tokens = tokens[1:]
-    except IndexError:
+    if len(tokens) == 0:
         raise SyntaxError("Unexpected EOF")
 
+    tok = tokens.pop(0)
     if tok == '(':
-        try:
-            end = rindex(tokens, ')')
-        except ValueError:
-            raise SyntaxError("Expected ')'")
-
-        in_toks = tokens[:end]
         exp = List()
-
-        while in_toks:
-            if in_toks[0] != '(':
-                exp.append(parse(in_toks[:1]))
-                in_toks.pop(0)
-            else:
-                end = rindex(in_toks, ')')
-                exp.append(parse(in_toks))
-                del in_toks[:end + 1]
-
+        while tokens[0] != ')':
+            exp.append(parse(tokens))
+        tokens.pop(0)
         return exp
+
+    if tok == ')':
+        raise SyntaxError("Unexpected ')'")
 
     if len(tok) >= 2 and tok[0] == '"' and tok[-1] == '"':
         return String(tok)
