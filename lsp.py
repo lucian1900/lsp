@@ -4,11 +4,28 @@ import re
 import sys
 
 
-class Symbol(str): pass
-class List(list): pass
-class Atom(object): pass
-class Number(Atom, int): pass
-class String(Atom, str): pass
+class Atom(object):
+    pass
+
+
+class Number(Atom, int):
+    def __repr__(self):
+        return str(self)
+
+
+class String(Atom, str):
+    def __repr__(self):
+        return '"' + self + '"'
+
+
+class List(list):
+    def __repr__(self):
+        return '(' + ' '.join(map(str, self)) + ')'
+
+
+class Symbol(str):
+    def __repr__(self):
+        return self
 
 
 class Env(dict):
@@ -50,14 +67,22 @@ class fn_macro(object):
 
     def __call__(self, *args):
         if len(args) != len(self.args):
-            raise RuntimeError("Wrong number of args")
+            raise RuntimeError("Expected {0} args, got {1}".format(
+                len(self.args), len(args)))
 
-        ns = Env(zip(self.args, args), parent=self.env)
-
-        return eval(self.body[0], ns)
+        return eval(self.body[0],
+                    Env(zip(self.args, args),
+                        parent=self.env))
 
     def __repr__(self):
         return '<lsp.lambda object at {0}>'.format(hex(id(self)))
+
+
+def quote_macro(body, env):
+    if len(body) != 1:
+        raise SyntaxError("quote expects 1 part")
+
+    return body[0]
 
 
 def plus(*args):
@@ -66,7 +91,7 @@ def plus(*args):
 
 def minus(*args):
     if len(args) == 0:
-        raise RuntimeError('expects at least 1 arguments')
+        raise RuntimeError("Expects at least 1 arguments")
 
     elif len(args) == 1:
         return -args[0]
@@ -78,7 +103,7 @@ macros = {
     'if': if_macro,
     'fn': fn_macro,
     'def': def_macro,
-    'quote': '',
+    'quote': quote_macro,
 }
 
 env = Env({

@@ -35,6 +35,12 @@ def test_read_func():
     assert read('(fn (x) (+ x 1))') == ['fn', ['x'], ['+', 'x', 1]]
 
 
+def test_repr():
+    assert str(read('1')) == '1'
+    assert str(read('"hello"')) == '"hello"'
+    assert str(read('(1 2 3)')) == '(1 2 3)'
+
+
 def test_eval_atom():
     assert eval(1) == 1
 
@@ -81,3 +87,7 @@ def test_fn():
 def test_defn():
     lsp('(def f (fn () 1))')
     assert lsp('(f)') == 1
+
+
+def test_quote():
+    assert lsp('(quote (+))') == ['+']
