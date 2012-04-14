@@ -26,16 +26,16 @@ class Env(dict):
                 raise e
 
 
-def if_macro(body):
-    if eval(body[0]):
-        return eval(body[1])
+def if_macro(body, env):
+    if eval(body[0], env):
+        return eval(body[1], env)
     else:
-        return eval(body[2])
+        return eval(body[2], env)
 
 
-def def_macro(body):
+def def_macro(body, env):
     name = body[0]
-    val = eval(body[1])
+    val = eval(body[1], env)
 
     env[name] = eval(val, env)
 
@@ -43,15 +43,16 @@ def def_macro(body):
 
 
 class fn_macro(object):
-    def __init__(self, body):
+    def __init__(self, body, env):
         self.args = body[0]
         self.body = body[1:]
+        self.env = env
 
     def __call__(self, *args):
         if len(args) != len(self.args):
             raise RuntimeError("Wrong number of args")
 
-        ns = Env(zip(self.args, args), parent=loc)
+        ns = Env(zip(self.args, args), parent=self.env)
 
         return eval(self.body[0], ns)
 
@@ -95,7 +96,7 @@ def eval(sexp, env=env):
 
         if isinstance(sexp[0], Symbol) and sexp[0] in macros:
             m = macros[sexp[0]]
-            return m(sexp[1:])
+            return m(sexp[1:], env)
 
         else:
             vals = [eval(i, env) for i in sexp]
