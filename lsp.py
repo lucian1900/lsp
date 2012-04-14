@@ -37,7 +37,7 @@ def def_macro(body):
     name = body[0]
     val = eval(body[1])
 
-    env[name] = eval(val)
+    env[name] = eval(val, env)
 
     return val
 
@@ -51,7 +51,7 @@ class fn_macro(object):
         if len(args) != len(self.args):
             raise RuntimeError("Wrong number of args")
 
-        ns = Env(zip(self.args, args), parent=env)
+        ns = Env(zip(self.args, args), parent=loc)
 
         return eval(self.body[0], ns)
 
@@ -85,6 +85,7 @@ env = Env({
     '-': minus,
     'exit': sys.exit,
 })
+loc = env
 
 
 def eval(sexp, env=env):
