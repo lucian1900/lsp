@@ -33,7 +33,7 @@ class Env(dict):
         super(Env, self).__init__(ns)
         self.parent = parent
 
-    def getitem__(self, key):
+    def __getitem__(self, key):
         try:
             return super(Env, self).__getitem__(key)
         except KeyError, e:
@@ -114,6 +114,13 @@ def quote_macro(body, env):
         raise SyntaxError("quote expects 1 part")
 
     return body[0]
+
+
+def unquote_macro(body, env):
+    if len(body) != 1:
+        raise SyntaxError("unquote expects 1 part")
+
+    return eval(body[0], env)
 
 
 def plus(*args):

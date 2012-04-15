@@ -91,3 +91,11 @@ def test_defn():
 
 def test_quote():
     assert lsp('(quote (+))') == ['+']
+
+
+def test_defmacro():
+    lsp('(defmacro foo (x) x)')
+    assert lsp('(foo 1)') == lsp('1')
+
+    lsp('(defmacro foo (x) (quote x))')
+    assert lsp('(foo (+ 1 2))') == lsp('(quote (+ 1 2))')
