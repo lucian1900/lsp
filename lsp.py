@@ -84,9 +84,10 @@ class defmacro_macro(object):
             raise SyntaxError("Expected {0} args, got {1}: {2}".format(
                 len(self.args), len(args), args))
 
-        return eval(self.body,
-                    Env(zip(self.args, args),
-                        parent=self.env))
+        return eval(eval(self.body,
+                        Env(zip(self.args, args),
+                            parent=self.env)),
+                    env)
 
 
 class fn_macro(object):
