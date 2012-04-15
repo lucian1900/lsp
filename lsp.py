@@ -33,7 +33,7 @@ class Env(dict):
         super(Env, self).__init__(ns)
         self.parent = parent
 
-    def __getitem__(self, key):
+    def getitem__(self, key):
         try:
             return super(Env, self).__getitem__(key)
         except KeyError, e:
@@ -51,12 +51,42 @@ def if_macro(body, env):
 
 
 def def_macro(body, env):
+    if not isinstance(body[0], Symbol):
+        raise SyntaxError("Expected symbol, got {0}".format(body[0]))
+
     name = body[0]
     val = eval(body[1], env)
 
     env[name] = eval(val, env)
 
     return val
+
+
+class defmacro_macro(object):
+    def __init__(self, body, env):
+        self.env = env
+
+        if not isinstance(body[0], Symbol):
+            raise SyntaxError("Expected symbol, got {0}".format(body[0]))
+
+        name = body[0]
+
+        if not isinstance(body[1], List):
+            raise SyntaxError("Expected argument list, got {0}".format(body[1]))
+
+        self.args = body[1]
+        self.body = body[2]
+
+        macros[name] = self
+
+    def __call__(self, args, env):
+        if len(args) != len(self.args):
+            raise SyntaxError("Expected {0} args, got {1}: {2}".format(
+                len(self.args), len(args), args))
+
+        return eval(self.body,
+                    Env(zip(self.args, args),
+                        parent=self.env))
 
 
 class fn_macro(object):
@@ -67,8 +97,8 @@ class fn_macro(object):
 
     def __call__(self, *args):
         if len(args) != len(self.args):
-            raise RuntimeError("Expected {0} args, got {1}".format(
-                len(self.args), len(args)))
+            raise RuntimeError("Expected {0} args, got {1}: {2}".format(
+                len(self.args), len(args), args))
 
         return eval(self.body[0],
                     Env(zip(self.args, args),
@@ -104,6 +134,7 @@ macros = {
     'fn': fn_macro,
     'def': def_macro,
     'quote': quote_macro,
+    'defmacro': defmacro_macro,
 }
 
 env = Env({
