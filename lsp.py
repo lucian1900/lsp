@@ -28,6 +28,11 @@ class Symbol(str):
         return self
 
 
+class Quote(object):
+    def __init__(self, payload):
+        self.payload = payload
+
+
 class Env(dict):
     def __init__(self, ns, parent=None):
         super(Env, self).__init__(ns)
@@ -116,6 +121,13 @@ def quote_macro(body, env):
     return body[0]
 
 
+def quasiquote_macro(body, env):
+    if len(body) != 1:
+        raise SyntaxError("quasiquote expects 1 part")
+
+    return body[0]
+
+
 def unquote_macro(body, env):
     if len(body) != 1:
         raise SyntaxError("unquote expects 1 part")
@@ -179,6 +191,9 @@ def eval(sexp, env=env):
 
     elif isinstance(sexp, Atom):
         return sexp
+
+    elif isinstance(sexp, Quote):
+        return sexp.payload
 
     return sexp
 
