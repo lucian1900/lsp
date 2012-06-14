@@ -125,7 +125,7 @@ def quasiquote_macro(body, env):
     if len(body) != 1:
         raise SyntaxError("quasiquote expects 1 part")
 
-    return body[0]
+    return eval(Quote(body[0], env))
 
 
 def unquote_macro(body, env):
