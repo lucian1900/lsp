@@ -97,5 +97,7 @@ def test_defmacro():
     lsp('(defmacro foo (x) x)')
     assert lsp('(foo 1)') == lsp('1')
 
+
+def test_defmacro_quote():
     lsp('(defmacro foo (x) (quote x))')
     assert lsp('(foo (+ 1 2))') == lsp('(quote (+ 1 2))')
