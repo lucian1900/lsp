@@ -203,6 +203,11 @@ def parse(tokens):
         raise SyntaxError("Unexpected EOF")
 
     tok = tokens.pop(0)
+
+    if tok == "'":
+        tokens = ['quote'] + tokens + [')']
+        tok = '('
+
     if tok == '(':
         exp = List()
 
@@ -239,9 +244,12 @@ def lex(source):
     '''
 
     separators = {
-        '(': ' ( ',
-        ')': ' ) ',
-        ',': ' ',
+        "(": " ( ",
+        ")": " ) ",
+        ",": " ",
+        "'": " ' ",
+        "`": " ` ",
+        "~": " ~ ",
     }
 
     source = re.sub(r';.*(\n|$)', '\n', source)

@@ -41,6 +41,10 @@ def test_repr():
     assert str(read('(1 2 3)')) == '(1 2 3)'
 
 
+def test_quote_literal():
+    assert read("'x") == ['quote', 'x']
+
+
 def test_eval_atom():
     assert eval(1) == 1
 
@@ -91,6 +95,7 @@ def test_defn():
 
 def test_quote():
     assert lsp('(quote (+))') == ['+']
+    assert lsp("'(+)") == ['+']
 
 
 def test_defmacro():
