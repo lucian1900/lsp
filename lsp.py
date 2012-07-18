@@ -149,6 +149,26 @@ def minus(*args):
     return args[0] - sum(args[1:])
 
 
+def lt(*args):
+    pass
+
+
+def lte(*args):
+    pass
+
+
+def gt(*args):
+    pass
+
+
+def gte(*args):
+    pass
+
+
+def eq(*args):
+    pass
+
+
 macros = {
     'if': if_macro,
     'fn': fn_macro,
@@ -160,6 +180,11 @@ macros = {
 env = Env({
     '+': plus,
     '-': minus,
+    '=': eq,
+    '<': lt,
+    '>': gt,
+    '<=': lte,
+    '>=': gte,
     'exit': sys.exit,
 })
 loc = env
