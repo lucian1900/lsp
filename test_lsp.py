@@ -97,6 +97,9 @@ def test_quote():
     assert lsp('(quote (+))') == ['+']
     assert lsp("'(+)") == ['+']
 
+    assert lsp('(quote (1 2))') == [1, 2]
+    assert lsp("'(1 2)") == [1, 2]
+
 
 def test_defmacro():
     lsp('(defmacro foo (x) x)')
@@ -108,7 +111,36 @@ def test_defmacro():
 
 
 def test_quasiquote():
-    assert lsp("`(+ 1 2)") == lsp("'(+ 1 2)")
+    #assert lsp("`(+ 1 2)") == lsp("'(+ 1 2)")
 
     lsp('(def x 2)')
-    assert lsp("(eval `(+ 1 ~x))") == 3
+    #assert lsp("(eval `(+ 1 ~x))") == 3
+
+
+def test_plus():
+    assert lsp('(+)') == 0
+    assert lsp('(+ 1)') == 1
+    assert lsp('(+ 1 2 3)') == 6
+
+
+def test_minus():
+    with raises(RuntimeError):
+        assert lsp('(-)')
+
+    assert lsp('(- 1)') == -1
+    assert lsp('(- 1 2)') == -1
+
+
+def test_eq():
+    assert lsp('(= 1 1)') == True
+    assert lsp('(= 1 2)') == False
+    #assert lsp("(= '(1 2) '(1 2))") == True
+
+
+def test_lt():
+    with raises(RuntimeError):
+        lsp('(<)')
+        lsp('(< 1)')
+
+    assert lsp('(< 1 2)') == True
+    assert lsp('(< 2 1)') == False

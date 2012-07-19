@@ -2,6 +2,8 @@
 
 import re
 import sys
+import operator
+from functools import wraps
 
 
 class Atom(object):
@@ -135,38 +137,74 @@ def unquote_macro(body, env):
     return eval(body[0], env)
 
 
+class arguments(object):
+    def __init__(self, gte=0, eq=None):
+        self.gte = gte
+        self.eq = eq
+
+    def __call__(self, func):
+        @wraps(func)
+        def wrapper(*args):
+            if self.eq is not None:
+                if len(args) == self.eq:
+                    raise RuntimeError(
+                        "Expects exactly {0} arguments".format(self.eq))
+            else:
+                if len(args) < self.gte:
+                    raise RuntimeError(
+                        "Expects at least {0} arguments".format(self.gte))
+
+            return func(*args)
+
+        return wrapper
+
+
 def plus(*args):
     return sum(args)
 
 
+@arguments(1)
 def minus(*args):
-    if len(args) == 0:
-        raise RuntimeError("Expects at least 1 arguments")
-
-    elif len(args) == 1:
+    if len(args) == 1:
         return -args[0]
 
     return args[0] - sum(args[1:])
 
 
+def reduce(op, coll, initializer=None, sentinel=None):
+    if initializer is None:
+        acc = coll[0]
+        coll = coll[1:]
+    else:
+        acc = initializer
+
+    for i in coll:
+        if acc == sentinel:
+            return acc
+
+        acc = op(acc, i)
+
+    return acc
+
+
+@arguments(2)
 def lt(*args):
-    pass
+    return reduce(operator.lt, args, sentinel=False)
 
 
+@arguments(2)
 def lte(*args):
-    pass
+    return reduce(operator.lte, args, sentinel=False)
 
 
+@arguments(2)
 def gt(*args):
-    pass
+    return reduce(operator.gt, args, sentinel=False)
 
 
+@arguments(2)
 def gte(*args):
-    pass
-
-
-def eq(*args):
-    pass
+    return reduce(operator.gte, args, sentinel=False)
 
 
 macros = {
@@ -180,7 +218,7 @@ macros = {
 env = Env({
     '+': plus,
     '-': minus,
-    '=': eq,
+    '=': operator.eq,
     '<': lt,
     '>': gt,
     '<=': lte,
