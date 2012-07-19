@@ -11,8 +11,30 @@ class Atom(object):
 
 
 class Number(Atom, int):
+    def __init__(self, value):
+        if isinstance(value, str):
+            value = value.lower()
+
+        super(Number, self).__init__(value)
+
     def __repr__(self):
         return str(self)
+
+
+class Bool(Atom):
+    def __init__(self, value):
+        if value == 'true':
+            self.value = True
+        elif value == 'false':
+            self.value = False
+        else:
+            raise ValueError('Invalid boolean literal: {0}'.format(value))
+
+    def __repr__(self):
+        return repr(self.value).lower()
+
+    def __bool__(self):
+        return self.value
 
 
 class String(Atom, str):
@@ -147,11 +169,11 @@ class arguments(object):
         def wrapper(*args):
             if self.eq is not None:
                 if len(args) == self.eq:
-                    raise RuntimeError(
+                    raise TypeError(
                         "Expects exactly {0} arguments".format(self.eq))
             else:
                 if len(args) < self.gte:
-                    raise RuntimeError(
+                    raise TypeError(
                         "Expects at least {0} arguments".format(self.gte))
 
             return func(*args)
@@ -293,12 +315,11 @@ def parse(tokens):
     if len(tok) >= 2 and tok[0] == '"' and tok[-1] == '"':
         return String(tok)
 
-    try:
-        atom = Number(tok)
-    except ValueError:
-        return Symbol(tok)
-    else:
-        return atom  # int after all
+    for t in [Number, Bool, Symbol]:
+        try:
+            return t(tok)
+        except ValueError:
+            pass
 
 
 def lex(source):

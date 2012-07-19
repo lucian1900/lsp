@@ -15,6 +15,8 @@ def test_lex_comment():
 
 def test_read_atom():
     assert parse(['1']) == 1
+    assert parse(['true']) == True
+    assert parse(['false']) == False
 
 
 def test_read_list():
@@ -124,7 +126,7 @@ def test_plus():
 
 
 def test_minus():
-    with raises(RuntimeError):
+    with raises(TypeError):
         assert lsp('(-)')
 
     assert lsp('(- 1)') == -1
@@ -138,7 +140,7 @@ def test_eq():
 
 
 def test_lt():
-    with raises(RuntimeError):
+    with raises(TypeError):
         lsp('(<)')
         lsp('(< 1)')
 
