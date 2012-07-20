@@ -61,6 +61,7 @@ def test_read_quote():
     assert read("'(1 2)") == ['quote', [1, 2]]
     assert read("'((1 2))") == ['quote', [[1, 2]]]
     assert read("'((1 2) (3 4))") == ['quote', [[1, 2], [3, 4]]]
+    assert read("(= '1 '(2 3)") == ['=', ['quote', 1], ['quote', 2, 3]]
     assert read("(= '(1 2) '3") == ['=', ['quote', [1, 2]], ['quote', 3]]
 
 
@@ -172,6 +173,7 @@ def test_eq():
     assert lsp('(= 1 1)') == True
     assert lsp('(= 1 2)') == False
     assert lsp("(= (quote (1 2)) (quote (3 4)))") == False
+    assert lsp("(= '(1 2) '(1 2))") == True
     assert lsp("(= '(1 2) '(3 4))") == False
 
 

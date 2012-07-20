@@ -393,14 +393,14 @@ def parse(tokens):
 
 
 def lex(source):
-    '''Split by parens, consider commas whitespace
+    '''Split by parens, quotes and other reader tokens
     Inspired by Peter Norvig's lis.py
     '''
 
     separators = {
+        ",": " ",  # commas are whitespace
         "(": " ( ",
         ")": " ) ",
-        ",": " ",
         "'": " ' ",
         "`": " ` ",
         "~": " ~ ",
