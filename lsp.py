@@ -19,7 +19,7 @@ class Number(Atom, int):
 
 
 class Bool(Atom):
-    def __init__(self, value):
+    def __init__(self, value='false'):
         if value == 'true':
             self.value = True
         elif value == 'false':
@@ -43,8 +43,21 @@ class Bool(Atom):
 
 
 class Nil(Atom):
+    def __init__(self, value='nil'):
+        if value != 'nil':
+            raise ValueError('Invalid nil literal: {0}'.format(value))
+
     def __nonzero__(self):
         return False
+
+    def __repr__(self):
+        return 'nil'
+
+    def __eq__(self, other):
+        if isinstance(other, Nil):
+            return True
+        else:
+            return False
 
 
 class String(Atom, str):
@@ -325,7 +338,7 @@ def parse(tokens):
     if len(tok) >= 2 and tok[0] == '"' and tok[-1] == '"':
         return String(tok)
 
-    for t in [Number, Bool, Symbol]:
+    for t in [Number, Bool, Nil, Symbol]:
         try:
             return t(tok)
         except ValueError:

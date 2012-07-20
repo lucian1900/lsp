@@ -1,6 +1,6 @@
 from py.test import raises
 
-from lsp import lex, parse, read, eval, Symbol, List, lsp, Env
+from lsp import lex, parse, read, eval, Symbol, List, Nil, lsp, Env
 
 
 def test_lex():
@@ -16,6 +16,7 @@ def test_lex_comment():
 def test_read_atom():
     assert parse(['1']) == 1
     assert parse(['true'])
+    assert parse(['nil']) == Nil()
 
 
 def test_bool():
@@ -75,8 +76,9 @@ def test_eval_func():
 def test_if():
     assert lsp('(if 1 2 3)') == 2
     assert lsp('(if 0 2 3)') == 2
+    assert lsp('(if true 2 3)') == 2
     assert lsp('(if false 2 3)') == 3
-    assert lsp('(if false 2 3)') == 3
+    assert lsp('(if nil 2 3)') == 3
 
 
 def test_def():
