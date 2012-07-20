@@ -58,11 +58,11 @@ def test_repr():
 def test_read_quote():
     assert read("'x") == ['quote', 'x']
 
-    assert read("'(1 2)") == ['quote', [1, 2]]
-    assert read("'((1 2))") == ['quote', [[1, 2]]]
-    assert read("'((1 2) (3 4))") == ['quote', [[1, 2], [3, 4]]]
-    assert read("(= '1 '(2 3)") == ['=', ['quote', 1], ['quote', 2, 3]]
-    assert read("(= '(1 2) '3") == ['=', ['quote', [1, 2]], ['quote', 3]]
+    assert read("'(1 2)") == read("(quote (1 2))")
+    assert read("'((1 2))") == read("(quote ((1 2)))")
+    assert read("'((1 2) (3 4))") == read("(quote ((1 2) (3 4)))")
+    assert read("(= '1 '(2 3))") == read("(= (quote 1) (quote (2 3)))")
+    assert read("(= '(1 2) '3)") == read("(= (quote (1 2) (quote 3)))")
 
 
 def test_eval_atom():
