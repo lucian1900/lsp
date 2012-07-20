@@ -30,7 +30,7 @@ def test_bool():
     assert parse(['false']) == False
 
 
-def test_read_list():
+def test_parse_list():
     assert parse(['(', '1', '2', ')']) == [1, 2]
 
     assert parse(['(', '1', '(', '2', '3', ')', ')']) == [1, [2, 3]]
@@ -39,7 +39,7 @@ def test_read_list():
     assert parse(['(', '(', '1', ')', '(', '2', ')', ')']) == [[1], [2]]
 
 
-def test_read_unmatched():
+def test_parse_unmatched():
     with raises(SyntaxError):
         assert parse(['('])
 
@@ -62,7 +62,7 @@ def test_read_quote():
     assert read("'((1 2))") == read("(quote ((1 2)))")
     assert read("'((1 2) (3 4))") == read("(quote ((1 2) (3 4)))")
     assert read("(= '1 '(2 3))") == read("(= (quote 1) (quote (2 3)))")
-    assert read("(= '(1 2) '3)") == read("(= (quote (1 2) (quote 3)))")
+    assert read("(= '(1 2) '3)") == read("(= (quote (1 2)) (quote 3))")
 
 
 def test_eval_atom():
