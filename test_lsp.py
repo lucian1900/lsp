@@ -144,6 +144,17 @@ def test_minus():
     assert lsp('(- 1 2)') == -1
 
 
+def test_multiply():
+    assert lsp('(*)') == 1
+    assert lsp('(* 2)') == 2
+    assert lsp('(* 1 2 3)') == 6
+
+
+def test_divide():
+    assert lsp('(/ 10 5)') == 2
+    assert lsp('(/ 10 5 3)') == lsp('(/ (/ 10 5) 3)')
+
+
 def test_eq():
     assert lsp('(= 1 1)') == True
     assert lsp('(= 1 2)') == False

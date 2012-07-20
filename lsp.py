@@ -220,6 +220,7 @@ def multiply(*args):
     return reduce(operator.mul, args, initializer=1)
 
 
+@arguments(2)
 def divide(*args):
     return reduce(operator.truediv, args)
 
