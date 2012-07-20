@@ -337,6 +337,15 @@ def eval(sexp, env=env):
     return sexp
 
 
+def quote_wrap(exp, quoting):
+    "Wrap expression in a quote if necessary"
+
+    if quoting:
+        return List([Symbol('quote'), exp])
+    else:
+        return exp
+
+
 def parse(tokens):
     if len(tokens) == 0:
         raise SyntaxError("Unexpected EOF")
@@ -344,9 +353,12 @@ def parse(tokens):
     tok = tokens.pop(0)
 
     if tok == "'":
-        tokens = ['quote'] + tokens + [')']
-        tok = '('
+        quoting = True
+        tok = tokens.pop(0)
+    else:
+        quoting = False
 
+    # Lists
     if tok == '(':
         exp = List()
 
@@ -361,19 +373,23 @@ def parse(tokens):
 
         tokens.pop(0)  # Remove ')'
 
-        return exp
+        return quote_wrap(exp, quoting)
 
     if tok == ')':
         raise SyntaxError("Unexpected ')'")
 
+    # Strings
     if len(tok) >= 2 and tok[0] == '"' and tok[-1] == '"':
-        return String(tok)
+        return quote_wrap(String(tok), quoting)
 
+    # Atoms
     for t in [Integral, Rational, Boolean, Nil, Symbol]:
         try:
-            return t(tok)
+            exp = t(tok)
         except ValueError:
             pass
+        else:
+            return quote_wrap(exp, quoting)
 
 
 def lex(source):
