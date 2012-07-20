@@ -172,7 +172,7 @@ def test_eq():
     assert lsp('(= 1 1)') == True
     assert lsp('(= 1 2)') == False
     assert lsp("(= (quote (1 2)) (quote (3 4)))") == False
-    #assert lsp("(= '(1 2) '(3 4))") == False
+    assert lsp("(= '(1 2) '(3 4))") == False
 
 
 def test_lt():
