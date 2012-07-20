@@ -7,16 +7,13 @@ from functools import wraps
 
 
 class Atom(object):
-    pass
+    def __nonzero__(self):
+        return True
+
+    __bool__ = __nonzero__
 
 
 class Number(Atom, int):
-    def __init__(self, value):
-        if isinstance(value, str):
-            value = value.lower()
-
-        super(Number, self).__init__(value)
-
     def __repr__(self):
         return str(self)
 
@@ -36,8 +33,6 @@ class Bool(Atom):
     def __nonzero__(self):
         return self.value
 
-    __bool__ = __nonzero__
-
     def __eq__(self, other):
         if isinstance(other, bool):
             return bool(self) == other
@@ -45,6 +40,11 @@ class Bool(Atom):
             return self.value == other.value
         else:
             return False
+
+
+class Nil(Atom):
+    def __nonzero__(self):
+        return False
 
 
 class String(Atom, str):
