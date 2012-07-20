@@ -183,8 +183,8 @@ def unquote_macro(body, env):
 
 
 class arguments(object):
-    def __init__(self, gte=0, eq=None):
-        self.gte = gte
+    def __init__(self, ge=0, eq=None):
+        self.gte = ge
         self.eq = eq
 
     def __call__(self, func):
@@ -216,6 +216,14 @@ def minus(*args):
     return args[0] - sum(args[1:])
 
 
+def multiply(*args):
+    return reduce(operator.mul, args, initializer=1)
+
+
+def divide(*args):
+    return reduce(operator.truediv, args)
+
+
 def reduce(op, coll, initializer=None, sentinel=None):
     if initializer is None:
         acc = coll[0]
@@ -238,7 +246,7 @@ def lt(*args):
 
 
 @arguments(2)
-def lte(*args):
+def le(*args):
     return reduce(operator.lte, args, sentinel=False)
 
 
@@ -248,7 +256,7 @@ def gt(*args):
 
 
 @arguments(2)
-def gte(*args):
+def ge(*args):
     return reduce(operator.gte, args, sentinel=False)
 
 
@@ -263,11 +271,13 @@ macros = {
 env = Env({
     '+': plus,
     '-': minus,
+    '*': multiply,
+    '/': divide,
     '=': operator.eq,
     '<': lt,
     '>': gt,
-    '<=': lte,
-    '>=': gte,
+    '<=': le,
+    '>=': ge,
     'exit': sys.exit,
 })
 loc = env
