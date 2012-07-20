@@ -165,6 +165,29 @@ def test_lt():
     with raises(TypeError):
         lsp('(<)')
         lsp('(< 1)')
+        lsp('(<=)')
+        lsp('(<= 1)')
 
     assert lsp('(< 1 2)') == True
     assert lsp('(< 2 1)') == False
+    assert lsp('(< 2 2)') == False
+
+    assert lsp('(<= 1 2)') == True
+    assert lsp('(<= 2 1)') == False
+    assert lsp('(<= 2 2)') == True
+
+
+def test_gt():
+    with raises(TypeError):
+        lsp('(>)')
+        lsp('(> 1)')
+        lsp('(>=)')
+        lsp('(>= 1)')
+
+    assert lsp('(> 1 2)') == False
+    assert lsp('(> 2 1)') == True
+    assert lsp('(> 2 2)') == False
+
+    assert lsp('(>= 1 2)') == False
+    assert lsp('(>= 2 1)') == True
+    assert lsp('(>= 2 2)') == True

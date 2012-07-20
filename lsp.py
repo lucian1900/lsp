@@ -248,7 +248,7 @@ def lt(*args):
 
 @arguments(2)
 def le(*args):
-    return reduce(operator.lte, args, sentinel=False)
+    return reduce(operator.le, args, sentinel=False)
 
 
 @arguments(2)
@@ -258,7 +258,7 @@ def gt(*args):
 
 @arguments(2)
 def ge(*args):
-    return reduce(operator.gte, args, sentinel=False)
+    return reduce(operator.ge, args, sentinel=False)
 
 
 macros = {
