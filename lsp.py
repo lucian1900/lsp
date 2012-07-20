@@ -336,6 +336,8 @@ def eval(sexp, env=env):
 
     return sexp
 
+env['eval'] = eval
+
 
 def quote_wrap(exp, quoting):
     "Wrap expression in a quote if necessary"
@@ -406,6 +408,7 @@ def lex(source):
         "~": " ~ ",
     }
 
+    # Remove comments
     source = re.sub(r';.*(\n|$)', '\n', source)
 
     for sep, rep in separators.items():
