@@ -33,8 +33,18 @@ class Bool(Atom):
     def __repr__(self):
         return repr(self.value).lower()
 
-    def __bool__(self):
+    def __nonzero__(self):
         return self.value
+
+    __bool__ = __nonzero__
+
+    def __eq__(self, other):
+        if isinstance(other, bool):
+            return bool(self) == other
+        elif isinstance(other, Bool):
+            return self.value == other.value
+        else:
+            return False
 
 
 class String(Atom, str):

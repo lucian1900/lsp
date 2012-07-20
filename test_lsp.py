@@ -15,7 +15,12 @@ def test_lex_comment():
 
 def test_read_atom():
     assert parse(['1']) == 1
+
+    assert parse(['true'])
     assert parse(['true']) == True
+    assert parse(['true']) == parse(['true'])
+
+    assert not parse(['false'])
     assert parse(['false']) == False
 
 
