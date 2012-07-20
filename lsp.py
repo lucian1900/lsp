@@ -4,6 +4,7 @@ import re
 import sys
 import operator
 from functools import wraps
+from fractions import Fraction
 
 
 class Atom(object):
@@ -13,12 +14,16 @@ class Atom(object):
     __bool__ = __nonzero__
 
 
-class Number(Atom, int):
+class Integral(Atom, int):
     def __repr__(self):
         return str(self)
 
 
-class Bool(Atom):
+class Rational(Atom, Fraction):
+    pass
+
+
+class Boolean(Atom):
     def __init__(self, value='false'):
         if value == 'true':
             self.value = True
@@ -36,7 +41,7 @@ class Bool(Atom):
     def __eq__(self, other):
         if isinstance(other, bool):
             return bool(self) == other
-        elif isinstance(other, Bool):
+        elif isinstance(other, Boolean):
             return self.value == other.value
         else:
             return False
@@ -364,7 +369,7 @@ def parse(tokens):
     if len(tok) >= 2 and tok[0] == '"' and tok[-1] == '"':
         return String(tok)
 
-    for t in [Number, Bool, Nil, Symbol]:
+    for t in [Integral, Rational, Boolean, Nil, Symbol]:
         try:
             return t(tok)
         except ValueError:

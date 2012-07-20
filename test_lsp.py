@@ -1,3 +1,5 @@
+from fractions import Fraction
+
 from py.test import raises
 
 from lsp import lex, parse, read, eval, Symbol, List, Nil, lsp, Env
@@ -15,6 +17,7 @@ def test_lex_comment():
 
 def test_read_atom():
     assert parse(['1']) == 1
+    assert parse(['1/3']) == Fraction(1, 3)
     assert parse(['true'])
     assert parse(['nil']) == Nil()
 
@@ -113,6 +116,14 @@ def test_quote():
     assert lsp('(quote (1 2))') == [1, 2]
     assert lsp("'(1 2)") == [1, 2]
 
+    assert lsp("'((1 2))") == [[1, 2]]
+    assert lsp("'((1 2) (1 2))") == [[1, 2], [1, 2]]
+
+    assert read("'(1 2)") == ['quote', [1, 2]]
+    assert read("'((1 2))") == ['quote', [[1, 2]]]
+    assert read("'((1 2) (3 4))") == ['quote', [[1, 2], [3, 4]]]
+    assert read("(= '(1 2) '3") == ['=', ['quote', [1, 2]], ['quote', 3]]
+
 
 def test_defmacro():
     lsp('(defmacro foo (x) x)')
@@ -153,6 +164,7 @@ def test_multiply():
 def test_divide():
     assert lsp('(/ 10 5)') == 2
     assert lsp('(/ 10 5 3)') == lsp('(/ (/ 10 5) 3)')
+    assert lsp('(/ 5 1/2)')
 
 
 def test_eq():
