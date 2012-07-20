@@ -36,6 +36,7 @@ def test_read_list():
     assert parse(['(', '1', '(', '2', '3', ')', ')']) == [1, [2, 3]]
     assert parse(['(', '(', '1', '2', ')', '3', ')']) == [[1, 2], 3]
     assert parse(['(', '1', '(', '2', ')', '3', ')']) == [1, [2], 3]
+    assert parse(['(', '(', '1', ')', '(', '2', ')', ')']) == [[1], [2]]
 
 
 def test_read_unmatched():
@@ -54,8 +55,13 @@ def test_repr():
     assert str(read('(1 2 3)')) == '(1 2 3)'
 
 
-def test_quote_literal():
+def test_quote_reader():
     assert read("'x") == ['quote', 'x']
+
+    assert read("'(1 2)") == ['quote', [1, 2]]
+    assert read("'((1 2))") == ['quote', [[1, 2]]]
+    assert read("'((1 2) (3 4))") == ['quote', [[1, 2], [3, 4]]]
+    assert read("(= '(1 2) '3") == ['=', ['quote', [1, 2]], ['quote', 3]]
 
 
 def test_eval_atom():
@@ -118,11 +124,7 @@ def test_quote():
 
     assert lsp("'((1 2))") == [[1, 2]]
     assert lsp("'((1 2) (1 2))") == [[1, 2], [1, 2]]
-
-    assert read("'(1 2)") == ['quote', [1, 2]]
-    assert read("'((1 2))") == ['quote', [[1, 2]]]
-    assert read("'((1 2) (3 4))") == ['quote', [[1, 2], [3, 4]]]
-    assert read("(= '(1 2) '3") == ['=', ['quote', [1, 2]], ['quote', 3]]
+    assert lsp("(= (quote (1 2)) (quote (3 4)))") == False
 
 
 def test_defmacro():
