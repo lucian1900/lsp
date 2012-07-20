@@ -144,7 +144,20 @@ class defmacro_macro(object):
 
 class fn_macro(object):
     def __init__(self, body, env):
-        self.args = body[0]
+        first = body[0]
+        if isinstance(first, Symbol):
+            self.name = first
+            body = body[1:]
+            first = body[0]
+        else:
+            self.name = None
+
+        if isinstance(first, List):
+            self.args = first
+        else:
+            raise SyntaxError("Expected argument list, got: {0}".format(
+                first))
+
         self.body = body[1:]
         self.env = env
 
@@ -153,9 +166,11 @@ class fn_macro(object):
             raise RuntimeError("Expected {0} args, got {1}: {2}".format(
                 len(self.args), len(args), args))
 
-        return eval(self.body[0],
-                    Env(zip(self.args, args),
-                        parent=self.env))
+        loc = Env(zip(self.args, args), parent=self.env)
+        if self.name is not None:
+            loc[self.name] = self
+
+        return eval(self.body[0], loc)
 
     def __repr__(self):
         return '<lsp.lambda object at {0}>'.format(hex(id(self)))

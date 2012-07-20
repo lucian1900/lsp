@@ -191,3 +191,13 @@ def test_gt():
     assert lsp('(>= 1 2)') == False
     assert lsp('(>= 2 1)') == True
     assert lsp('(>= 2 2)') == True
+
+
+def test_fact():
+    fact = '''
+(fn fact (x)
+  (if (<= x 1)
+    1
+    (* x (fact (- x 1)))))
+'''
+    assert lsp('({0} 5)'.format(fact)) == 120
