@@ -315,6 +315,11 @@ def ge(*args):
     return reduce(operator.ge, args, sentinel=False)
 
 
+@arguments(2)
+def not_eq(*args):
+    return reduce(operator.ne, args, sentinel=False)
+
+
 @arguments(1)
 def print_(*args):
     for i in args:
@@ -382,11 +387,15 @@ env = Env({
     '-': minus,
     '*': multiply,
     '/': divide,
-    '=': operator.eq,
     '<': lt,
     '>': gt,
     '<=': le,
     '>=': ge,
+
+    # Bool
+    '=': operator.eq,
+    'not': operator.not_,
+    'not=': not_eq,
 
     # Core
     'apply': apply,

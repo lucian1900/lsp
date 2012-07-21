@@ -262,3 +262,7 @@ def test_let():
 
 def test_filter():
     assert lsp("(filter (fn (x) (> x 2)) '(1 2 3 4))") == [3, 4]
+
+
+def test_comp():
+    assert lsp("((comp inc inc) 2)") == 4

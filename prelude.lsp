@@ -1,9 +1,13 @@
+(defmacro defn (name args body)
+  `(def ~name (fn (~@args) ~body)))
+
 (defmacro let (pairs exp)
   `((fn (~@(slice pairs 0 (len pairs) 2)) ~exp)
     ~@(slice pairs 1 (len pairs) 2)))
 
-(defmacro defn (name args body)
-  `(def ~name (fn (~@args) ~body)))
+(defn comp (f g)
+  (fn (& xs)
+    (f (apply g xs))))
 
 (defn inc (x) (+ x 1))
 
