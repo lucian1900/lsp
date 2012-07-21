@@ -95,6 +95,7 @@ def test_if():
     assert lsp('(if true 2 3)') == 2
     assert lsp('(if false 2 3)') == 3
     assert lsp('(if nil 2 3)') == 3
+    assert lsp('(if (list) 2 3)') == 2
 
 
 def test_def():
