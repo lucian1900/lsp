@@ -593,7 +593,7 @@ def main():
                 print e
     elif len(sys.argv) == 2:
         with open(sys.argv[1]) as f:
-            print lsp(f.parse())
+            lsp(f.read())
     elif len(sys.argv) == 3:
         if sys.argv[1] == '-c':
             print lsp(sys.argv[2])
