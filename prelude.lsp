@@ -20,5 +20,5 @@
   (reduce (fn (acc e) (concat acc `(~(fun e)))) '() coll))
 
 (defmacro let (pairs exp)
-  (`(fn () ~exp)) )
-
+  `((fn (~@(slice pairs 0 (len pairs) 2)) ~exp)
+    ~@(slice pairs 1 (len pairs) 2)))

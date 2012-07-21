@@ -330,6 +330,11 @@ def concat(coll1, coll2):
     return List(coll1 + coll2)
 
 
+@arguments(4)
+def slice_list(coll, start, end, step=1):
+    return List(coll[start:end:step])
+
+
 @arguments(1)
 def is_empty(coll):
     return len(coll) == 0
@@ -361,6 +366,8 @@ env = Env({
     'cons': cons,
     'concat': concat,
     'empty?': is_empty,
+    'slice': slice_list,
+    'len': len,
     'print': print_,
     'println': println,
     'input': input,
