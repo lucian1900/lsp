@@ -286,6 +286,8 @@ macros = {
     'fn': fn_macro,
     'def': def_macro,
     'quote': quote_macro,
+    'quasiquote': quasiquote_macro,
+    'unquote': unquote_macro,
     'defmacro': defmacro_macro,
 }
 
@@ -342,8 +344,8 @@ env['eval'] = eval
 def quote_wrap(exp, quoting):
     "Wrap expression in a quote if necessary"
 
-    if quoting:
-        return List([Symbol('quote'), exp])
+    if quoting is not None:
+        return List([Symbol(quoting), exp])
     else:
         return exp
 
@@ -355,10 +357,13 @@ def parse(tokens):
     tok = tokens.pop(0)
 
     if tok == "'":
-        quoting = True
+        quoting = 'quote'
+        tok = tokens.pop(0)
+    elif tok == "`":
+        quoting = 'quasiquote'
         tok = tokens.pop(0)
     else:
-        quoting = False
+        quoting = None
 
     # Lists
     if tok == '(':

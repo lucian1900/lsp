@@ -56,11 +56,12 @@ def test_repr():
 
 
 def test_read_quote():
-    assert read("'x") == ['quote', 'x']
+    assert read("'x") == read('(quote x)')
 
     assert read("'(1 2)") == read("(quote (1 2))")
     assert read("'((1 2))") == read("(quote ((1 2)))")
     assert read("'((1 2) (3 4))") == read("(quote ((1 2) (3 4)))")
+
     assert read("(= '1 '(2 3))") == read("(= (quote 1) (quote (2 3)))")
     assert read("(= '(1 2) '3)") == read("(= (quote (1 2)) (quote 3))")
 
@@ -127,6 +128,13 @@ def test_quote():
     assert lsp("'((1 2) (1 2))") == [[1, 2], [1, 2]]
 
 
+def test_quasiquote():
+    assert lsp("`(+ 1 2)") == lsp("'(+ 1 2)")
+
+    lsp('(def x 2)')
+    #assert lsp("(eval `(+ 1 ~x))") == 3
+
+
 def test_defmacro():
     lsp('(defmacro foo (x) x)')
     assert lsp('(foo 1)') == lsp('1')
@@ -134,13 +142,6 @@ def test_defmacro():
     lsp('(defmacro foo (x) (quote x))')
     with raises(RuntimeError):
         assert lsp('(foo (+ 1 2))') == lsp('(quote (+ 1 2))')
-
-
-def test_quasiquote():
-    #assert lsp("`(+ 1 2)") == lsp("'(+ 1 2)")
-
-    lsp('(def x 2)')
-    #assert lsp("(eval `(+ 1 ~x))") == 3
 
 
 def test_plus():
