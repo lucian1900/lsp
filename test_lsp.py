@@ -151,6 +151,12 @@ def test_defmacro():
     with raises(RuntimeError):
         assert lsp('(foo (+ 1 2))') == lsp('(quote (+ 1 2))')
 
+    lsp('(defmacro foo (x) `(+ 1 ~x))')
+    assert lsp('(foo 2)') == 3
+
+    lsp('(defmacro foo (x) `(+ 1 ~@x))')
+    assert lsp('(foo (2 3))') == 6
+
 
 def test_plus():
     assert lsp('(+)') == 0
