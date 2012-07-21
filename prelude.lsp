@@ -16,7 +16,9 @@
     acc
     (reduce fun (fun acc (first coll)) (rest coll))))
 
+(defn map (fun coll)
+  (reduce (fn (acc e) (concat acc `(~(fun e)))) '() coll))
 
-(defn let (pairs exp)
-  (`(fn () ~exp)))
+(defmacro let (pairs exp)
+  (`(fn () ~exp)) )
 

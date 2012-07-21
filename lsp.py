@@ -322,7 +322,12 @@ def rest(coll):
 
 @arguments(2)
 def cons(item, coll):
-    return List((item,) + coll)
+    return List([item] + coll)
+
+
+@arguments(2)
+def concat(coll1, coll2):
+    return List(coll1 + coll2)
 
 
 @arguments(1)
@@ -353,6 +358,8 @@ env = Env({
     '<=': le,
     '>=': ge,
     'rest': rest,
+    'cons': cons,
+    'concat': concat,
     'empty?': is_empty,
     'print': print_,
     'println': println,

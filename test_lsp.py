@@ -246,3 +246,7 @@ def test_list_slicing():
 
 def test_reduce():
     assert lsp("(reduce + 0 '(1 2 3))") == 6
+
+
+def test_map():
+    assert lsp("(map inc '(1 2 3))") == [2, 3, 4]
