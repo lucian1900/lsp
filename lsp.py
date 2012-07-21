@@ -340,6 +340,9 @@ def is_empty(coll):
     return len(coll) == 0
 
 
+def make_list(*items):
+    return List(items)
+
 macros = {
     'if': if_macro,
     'fn': fn_macro,
@@ -353,6 +356,7 @@ macros = {
 }
 
 env = Env({
+    # Numbers
     '+': plus,
     '-': minus,
     '*': multiply,
@@ -362,12 +366,20 @@ env = Env({
     '>': gt,
     '<=': le,
     '>=': ge,
+
+    # Core
+    'apply': apply,
+
+    # Lists
+    'list': make_list,
     'rest': rest,
     'cons': cons,
     'concat': concat,
     'empty?': is_empty,
     'slice': slice_list,
     'len': len,
+
+    # IO
     'print': print_,
     'println': println,
     'input': input,
