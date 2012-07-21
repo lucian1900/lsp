@@ -158,6 +158,10 @@ def test_defmacro():
     assert lsp('(foo (2 3))') == 6
 
 
+def test_do():
+    assert eval(read('(do 1 2)')) == 2
+
+
 def test_plus():
     assert lsp('(+)') == 0
     assert lsp('(+ 1)') == 1

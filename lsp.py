@@ -198,6 +198,13 @@ def unquote_splicing_macro(body, env):
     raise SyntaxError("unquote-splicing only valid in quasiquote")
 
 
+def do_macro(body, env):
+    for i in body:
+        result = eval(i, env)
+
+    return result
+
+
 class arguments(object):
     def __init__(self, ge=0, eq=None):
         self.gte = ge
@@ -286,6 +293,7 @@ macros = {
     'unquote': unquote_macro,
     'unquote-splicing': unquote_splicing_macro,
     'defmacro': defmacro_macro,
+    'do': do_macro,
 }
 
 env = Env({
@@ -423,7 +431,8 @@ def lex(source):
     '''
 
     separators = {
-        r",": " ",  # commas are whitespace
+        # commas are whitespace
+        r",": " ",
         r"\(": " ( ",
         r"\)": " ) ",
         r"'": " ' ",
@@ -447,7 +456,7 @@ def read(source):
 
 
 def lsp(source, env=env):
-    return eval(parse(lex(source)), env=env)
+    return eval(parse(lex('(do {0})'.format(source))), env=env)
 
 # load prelude
 with open('prelude.lsp') as f:
