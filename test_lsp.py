@@ -242,3 +242,7 @@ def test_list_slicing():
     assert lsp("('(1 2 3) 0)") == 1
     assert lsp("(first '(1 2 3))") == 1
     assert lsp("(rest '(1 2 3))") == [2, 3]
+
+
+def test_reduce():
+    assert lsp("(reduce + 0 '(1 2 3))") == 6

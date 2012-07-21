@@ -320,6 +320,16 @@ def rest(coll):
     return List(coll[1:])
 
 
+@arguments(2)
+def cons(item, coll):
+    return List((item,) + coll)
+
+
+@arguments(1)
+def is_empty(coll):
+    return len(coll) == 0
+
+
 macros = {
     'if': if_macro,
     'fn': fn_macro,
@@ -343,6 +353,7 @@ env = Env({
     '<=': le,
     '>=': ge,
     'rest': rest,
+    'empty?': is_empty,
     'print': print_,
     'println': println,
     'input': input,
