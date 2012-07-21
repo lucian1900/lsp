@@ -4,3 +4,6 @@
 (defn inc (x) (+ x 1))
 
 (defn dec (x) (- x 1))
+
+(defn first (coll)
+  (coll 0))

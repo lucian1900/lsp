@@ -236,3 +236,9 @@ def test_fact():
     (* x (fact (- x 1)))))
 '''
     assert lsp('({0} 5)'.format(fact)) == 120
+
+
+def test_list_slicing():
+    assert lsp("('(1 2 3) 0)") == 1
+    assert lsp("(first '(1 2 3))") == 1
+    assert lsp("(rest '(1 2 3))") == [2, 3]

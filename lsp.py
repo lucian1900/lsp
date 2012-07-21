@@ -70,9 +70,19 @@ class String(Atom, str):
         return '"' + self + '"'
 
 
-class List(list):
+class Collection(object):
+    def __call__(self, index):
+        return self[index]
+
+
+class List(list, Collection):
     def __repr__(self):
         return '(' + ' '.join(map(str, self)) + ')'
+
+
+class Vector(list, Collection):
+    def __repr__(self):
+        return '[' + ' '.join(map(str, self)) + ']'
 
 
 class Symbol(str):
@@ -305,6 +315,11 @@ def input(arg=''):
     return raw_input(arg)
 
 
+@arguments(1)
+def rest(coll):
+    return List(coll[1:])
+
+
 macros = {
     'if': if_macro,
     'fn': fn_macro,
@@ -327,6 +342,7 @@ env = Env({
     '>': gt,
     '<=': le,
     '>=': ge,
+    'rest': rest,
     'print': print_,
     'println': println,
     'input': input,
@@ -417,7 +433,7 @@ def parse(tokens):
 
     # Lists
     if tok == '(':
-        exp = List()
+        exp = []
 
         while True:
             try:
@@ -429,6 +445,7 @@ def parse(tokens):
             exp.append(parse(tokens))
 
         tokens.pop(0)  # Remove ')'
+        exp = List(exp)
 
         return quote_wrap(exp, quoting)
 
