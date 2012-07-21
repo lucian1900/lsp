@@ -9,6 +9,10 @@
   (fn (& xs)
     (f (apply g xs))))
 
+(defn partial (f & args)
+  (fn (& xs)
+    (apply f (concat args xs))))
+
 (defn inc (x) (+ x 1))
 
 (defn dec (x) (- x 1))

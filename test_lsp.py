@@ -266,3 +266,7 @@ def test_filter():
 
 def test_comp():
     assert lsp("((comp inc inc) 2)") == 4
+
+
+def test_partial():
+    assert lsp("((partial + 2) 2)") == 4
