@@ -449,6 +449,10 @@ def read(source):
 def lsp(source, env=env):
     return eval(parse(lex(source)), env=env)
 
+# load prelude
+with open('prelude.lsp') as f:
+    lsp(f.read())
+
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
