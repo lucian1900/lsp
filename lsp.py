@@ -168,15 +168,36 @@ class fn_macro(object):
             raise SyntaxError("Expected argument list, got: {0}".format(
                 first))
 
+        if '&' in self.args:
+            i = self.args.index('&')
+
+            self.rest_arg = self.args[i + 1]
+            if not isinstance(self.rest_arg, Symbol):
+                raise SyntaxError("Expected symbol as rest argument, got: {0}" \
+                    .format(self.rest_arg))
+
+            self.args = self.args[:i]
+        else:
+            self.rest_arg = None
+
         self.body = body[1:]
         self.env = env
 
     def __call__(self, *args):
-        if len(args) != len(self.args):
+        if self.rest_arg is not None:
+            if len(args) < len(self.args):
+                raise RuntimeError("Expected at least {0} args, got {1}: {2}" \
+                    .format(len(self.args), len(args), args))
+
+        elif len(args) != len(self.args):
             raise RuntimeError("Expected {0} args, got {1}: {2}".format(
                 len(self.args), len(args), args))
 
         loc = Env(zip(self.args, args), parent=self.env)
+
+        if self.rest_arg is not None:
+            loc[self.rest_arg] = List(args[len(self.args):])
+
         if self.name is not None:
             loc[self.name] = self
 

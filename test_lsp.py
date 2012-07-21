@@ -116,6 +116,9 @@ def test_fn():
     assert lsp('((fn (x) x) 1)') == 1
     assert lsp('((fn (x) (+ x 1)) 1)') == 2
 
+    assert read('(fn (x & xs) xs)') == ['fn', ['x', '&', 'xs'], 'xs']
+    assert lsp('((fn (x & xs) xs) 1 2 3 4)') == [2, 3, 4]
+
 
 def test_defn():
     lsp('(def f (fn () 1))')
