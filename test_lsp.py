@@ -131,7 +131,7 @@ def test_quote():
 def test_quasiquote():
     assert lsp("`(+ 1 2)") == lsp("'(+ 1 2)")
 
-    lsp('(def x 2)')
+    #lsp('(def x 2)')
     #assert lsp("(eval `(+ 1 ~x))") == 3
 
 
