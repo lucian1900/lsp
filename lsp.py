@@ -357,7 +357,6 @@ def eval_unquote(sexp, env):
                     l.append(eval_unquote(i, env))
 
             return List(l)
-            return List([eval_unquote(i, env) for i in sexp])
 
     return sexp
 
