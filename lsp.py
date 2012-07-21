@@ -5,6 +5,7 @@ import sys
 import operator
 from functools import wraps
 from fractions import Fraction
+from os.path import join, dirname
 
 
 class Atom(object):
@@ -567,11 +568,16 @@ def lsp(source, env=env):
     return eval(parse(lex('(do {0})'.format(source))), env=env)
 
 # load prelude
-with open('prelude.lsp') as f:
+with open(join(dirname(__file__), 'prelude.lsp')) as f:
     lsp(f.read())
 
 
-if __name__ == '__main__':
+def target(*args):
+    "RPython target"
+    return main, []
+
+
+def main():
     if len(sys.argv) == 1:
         while True:
             try:
@@ -588,3 +594,6 @@ if __name__ == '__main__':
             print "Only -c supported so far"
     else:
         print "Wrong args"
+
+if __name__ == '__main__':
+    main()
