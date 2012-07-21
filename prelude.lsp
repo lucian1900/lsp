@@ -1,3 +1,7 @@
+(defmacro let (pairs exp)
+  `((fn (~@(slice pairs 0 (len pairs) 2)) ~exp)
+    ~@(slice pairs 1 (len pairs) 2)))
+
 (defmacro defn (name args body)
   `(def ~name (fn (~@args) ~body)))
 
@@ -18,7 +22,3 @@
 
 (defn map (fun coll)
   (reduce (fn (acc e) (concat acc `(~(fun e)))) '() coll))
-
-(defmacro let (pairs exp)
-  `((fn (~@(slice pairs 0 (len pairs) 2)) ~exp)
-    ~@(slice pairs 1 (len pairs) 2)))

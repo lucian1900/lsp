@@ -254,3 +254,4 @@ def test_map():
 
 def test_let():
     assert lsp("(let (a 2, b 3) (+ a b))") == 5
+    #assert lsp("(let (a 2, b (inc a)) b)") == 3  # TODO
