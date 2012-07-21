@@ -80,11 +80,6 @@ class Symbol(str):
         return self
 
 
-class Quote(object):
-    def __init__(self, payload):
-        self.payload = payload
-
-
 class Env(dict):
     def __init__(self, ns, parent=None):
         super(Env, self).__init__(ns)
@@ -334,9 +329,6 @@ def eval(sexp, env=env):
 
     elif isinstance(sexp, Atom):
         return sexp
-
-    elif isinstance(sexp, Quote):
-        return sexp.payload
 
     return sexp
 
