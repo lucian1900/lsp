@@ -40,3 +40,11 @@
         (concat acc (list e))
         acc))
     '() coll))
+
+(defn range (start stop & args)
+  (let (step (if (empty? args) 1 (first args)))
+    ((fn gen-list (n)
+      (if (< n stop)
+        (concat (list n) (gen-list (+ n step)))
+        (list)))
+      start)))

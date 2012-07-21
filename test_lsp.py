@@ -271,3 +271,8 @@ def test_comp():
 
 def test_partial():
     assert lsp("((partial + 2) 2)") == 4
+
+
+def test_range():
+    assert lsp("(range 1 5)") == [1, 2, 3, 4]
+    assert lsp("(range 1 5 2)") == [1, 3]
