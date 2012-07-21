@@ -348,6 +348,15 @@ def eval_unquote(sexp, env):
         if len(sexp) == 2 and sexp[0] == Symbol('unquote'):
             return eval(sexp[1], env)
         else:
+            l = []
+            for i in sexp:
+                if hasattr(i, '__len__') and len(i) == 2 \
+                    and i[0] == Symbol('unquote-splicing'):
+                    l.extend(eval(i[1], env))
+                else:
+                    l.append(eval_unquote(i, env))
+
+            return List(l)
             return List([eval_unquote(i, env) for i in sexp])
 
     return sexp
@@ -428,6 +437,7 @@ def lex(source):
         r"\)": " ) ",
         r"'": " ' ",
         r"`": " ` ",
+        # match only if next char isn't @, lookahead so it isn't consumed
         r"~(?=[^@])": " ~ ",
         r"~@": " ~@ ",
     }
