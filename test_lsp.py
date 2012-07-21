@@ -15,6 +15,11 @@ def test_lex_comment():
     assert lex(';') == lex('')
 
 
+def test_lex_unquotes():
+    assert lex("~x") == ['~', 'x']
+    assert lex("~@x") == ['~@', 'x']
+
+
 def test_read_atom():
     assert parse(['1']) == 1
     assert parse(['1/3']) == Fraction(1, 3)
@@ -133,6 +138,9 @@ def test_quasiquote():
 
     loc = Env({'x': 2}, parent=env)
     assert lsp("(eval `(+ 1 ~x))", env=loc) == 3
+
+    loc = Env({'x': [3, 4]}, parent=env)
+    assert lsp("`(+ 1 2 ~@x)", env=loc) == read("(+ 1 2 3 4)")
 
 
 def test_defmacro():

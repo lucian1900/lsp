@@ -192,15 +192,15 @@ def quasiquote_macro(body, env):
     if len(body) != 1:
         raise SyntaxError("quasiquote expects 1 part")
 
-    # TODO mock eval
     return eval_unquote(body[0], env)
 
 
 def unquote_macro(body, env):
-    if len(body) != 1:
-        raise SyntaxError("unquote expects 1 part")
+    raise SyntaxError("unquote only valid in quasiquote")
 
-    return eval(body[0], env)
+
+def unquote_splicing_macro(body, env):
+    raise SyntaxError("unquote-splicing only valid in quasiquote")
 
 
 class arguments(object):
@@ -289,6 +289,7 @@ macros = {
     'quote': quote_macro,
     'quasiquote': quasiquote_macro,
     'unquote': unquote_macro,
+    'unquote-splicing': unquote_splicing_macro,
     'defmacro': defmacro_macro,
 }
 
@@ -376,6 +377,9 @@ def parse(tokens):
     elif tok == "~":
         quoting = "unquote"
         tok = tokens.pop(0)
+    elif tok == "~@":
+        quoting = "unquote-splicing"
+        tok = tokens.pop(0)
     else:
         quoting = None
 
@@ -419,19 +423,20 @@ def lex(source):
     '''
 
     separators = {
-        ",": " ",  # commas are whitespace
-        "(": " ( ",
-        ")": " ) ",
-        "'": " ' ",
-        "`": " ` ",
-        "~": " ~ ",
+        r",": " ",  # commas are whitespace
+        r"\(": " ( ",
+        r"\)": " ) ",
+        r"'": " ' ",
+        r"`": " ` ",
+        r"~(?=[^@])": " ~ ",
+        r"~@": " ~@ ",
     }
 
     # Remove comments
     source = re.sub(r';.*(\n|$)', '\n', source)
 
     for sep, rep in separators.items():
-        source = source.replace(sep, rep)
+        source = re.sub(sep, rep, source)
 
     return source.split()
 
