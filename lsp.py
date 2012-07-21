@@ -192,7 +192,8 @@ def quasiquote_macro(body, env):
     if len(body) != 1:
         raise SyntaxError("quasiquote expects 1 part")
 
-    return body[0]
+    # TODO mock eval
+    return eval_unquote(body[0], env)
 
 
 def unquote_macro(body, env):
@@ -341,6 +342,16 @@ def eval(sexp, env=env):
 env['eval'] = eval
 
 
+def eval_unquote(sexp, env):
+    if isinstance(sexp, List):
+        if len(sexp) == 2 and sexp[0] == Symbol('unquote'):
+            return eval(sexp[1], env)
+        else:
+            return List([eval_unquote(i, env) for i in sexp])
+
+    return sexp
+
+
 def quote_wrap(exp, quoting):
     "Wrap expression in a quote if necessary"
 
@@ -361,6 +372,9 @@ def parse(tokens):
         tok = tokens.pop(0)
     elif tok == "`":
         quoting = 'quasiquote'
+        tok = tokens.pop(0)
+    elif tok == "~":
+        quoting = "unquote"
         tok = tokens.pop(0)
     else:
         quoting = None
@@ -426,8 +440,8 @@ def read(source):
     return parse(lex(source))
 
 
-def lsp(source):
-    return eval(parse(lex(source)))
+def lsp(source, env=env):
+    return eval(parse(lex(source)), env=env)
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ from fractions import Fraction
 
 from py.test import raises
 
-from lsp import lex, parse, read, eval, Symbol, List, Nil, lsp, Env
+from lsp import lex, parse, read, eval, Symbol, List, Nil, lsp, Env, env
 
 
 def test_lex():
@@ -131,8 +131,8 @@ def test_quote():
 def test_quasiquote():
     assert lsp("`(+ 1 2)") == lsp("'(+ 1 2)")
 
-    #lsp('(def x 2)')
-    #assert lsp("(eval `(+ 1 ~x))") == 3
+    loc = Env({'x': 2}, parent=env)
+    assert lsp("(eval `(+ 1 ~x))", env=loc) == 3
 
 
 def test_defmacro():
