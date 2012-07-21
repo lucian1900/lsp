@@ -250,3 +250,7 @@ def test_reduce():
 
 def test_map():
     assert lsp("(map inc '(1 2 3))") == [2, 3, 4]
+
+
+def test_let():
+    assert lsp("(let (a 2, b 3) (+ a b))") == 5
