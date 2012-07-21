@@ -10,6 +10,7 @@ from os.path import join, dirname
 
 class Atom(object):
     def __nonzero__(self):
+        "Everything is truthy"
         return True
 
     __bool__ = __nonzero__
@@ -72,6 +73,12 @@ class String(Atom, str):
 
 
 class Collection(object):
+    def __nonzero__(self):
+        "Even empty collections are truthy"
+        return True
+
+    __bool__ = __nonzero__
+
     def __call__(self, index):
         return self[index]
 
