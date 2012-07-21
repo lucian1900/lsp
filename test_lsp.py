@@ -255,3 +255,7 @@ def test_map():
 def test_let():
     assert lsp("(let (a 2, b 3) (+ a b))") == 5
     #assert lsp("(let (a 2, b (inc a)) b)") == 3  # TODO
+
+
+def test_filter():
+    assert lsp("(filter (fn (x) (> x 2)) '(1 2 3 4))") == [3, 4]

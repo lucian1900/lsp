@@ -21,4 +21,14 @@
     (reduce fun (fun acc (first coll)) (rest coll))))
 
 (defn map (fun coll)
-  (reduce (fn (acc e) (concat acc `(~(fun e)))) '() coll))
+  (reduce
+    (fn (acc e) (concat acc (list (fun e))))
+    '() coll))
+
+(defn filter (pred coll)
+  (reduce
+    (fn (acc e)
+      (if (pred e)
+        (concat acc (list e))
+        acc))
+    '() coll))
