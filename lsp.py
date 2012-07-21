@@ -284,6 +284,27 @@ def ge(*args):
     return reduce(operator.ge, args, sentinel=False)
 
 
+@arguments(1)
+def print_(*args):
+    for i in args:
+        print i,
+
+    return Nil()
+
+
+@arguments(1)
+def println(*args):
+    for i in args:
+        print i,
+    print
+
+    return Nil()
+
+
+def input(arg=''):
+    return raw_input(arg)
+
+
 macros = {
     'if': if_macro,
     'fn': fn_macro,
@@ -306,6 +327,9 @@ env = Env({
     '>': gt,
     '<=': le,
     '>=': ge,
+    'print': print_,
+    'println': println,
+    'input': input,
     'exit': sys.exit,
 })
 loc = env
