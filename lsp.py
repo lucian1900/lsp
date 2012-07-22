@@ -244,47 +244,31 @@ def do_macro(body, env):
     return result
 
 
-class arguments(object):
-    def __init__(self, ge=0, eq=None):
-        self.gte = ge
-        self.eq = eq
-
-    def __call__(self, func):
-        @wraps(func)
-        def wrapper(*args):
-            if self.eq is not None:
-                if len(args) == self.eq:
-                    raise TypeError(
-                        "Expects exactly {0} arguments".format(self.eq))
-            else:
-                if len(args) < self.gte:
-                    raise TypeError(
-                        "Expects at least {0} arguments".format(self.gte))
-
-            return func(*args)
-
-        return wrapper
+def call_method(body, env):
+    if len(body) < 3:
+        raise SyntaxError("method call expects at least 3 parts, got: {0}" \
+            .format(len(body)))
 
 
-def plus(*args):
-    return sum(args)
+def plus(*nums):
+    return sum(nums)
 
 
-@arguments(1)
-def minus(*args):
-    if len(args) == 1:
-        return -args[0]
+def minus(num, *rest):
+    nums = (num,) + rest
 
-    return args[0] - sum(args[1:])
+    if len(nums) == 1:
+        return -nums[0]
 
-
-def multiply(*args):
-    return reduce(operator.mul, args, initializer=1)
+    return nums[0] - sum(nums[1:])
 
 
-@arguments(2)
-def divide(*args):
-    return reduce(operator.truediv, args)
+def multiply(*nums):
+    return reduce(operator.mul, nums, initializer=1)
+
+
+def divide(num1, num2, *rest):
+    return reduce(operator.truediv, (num1, num2) + rest)
 
 
 def reduce(op, coll, initializer=None, sentinel=None):
@@ -303,42 +287,35 @@ def reduce(op, coll, initializer=None, sentinel=None):
     return acc
 
 
-@arguments(2)
-def lt(*args):
-    return reduce(operator.lt, args, sentinel=False)
+def lt(i1, i2, *rest):
+    return reduce(operator.lt, (i1, i2) + rest, sentinel=False)
 
 
-@arguments(2)
-def le(*args):
-    return reduce(operator.le, args, sentinel=False)
+def le(i1, i2, *rest):
+    return reduce(operator.le, (i1, i2) + rest, sentinel=False)
 
 
-@arguments(2)
-def gt(*args):
-    return reduce(operator.gt, args, sentinel=False)
+def gt(i1, i2, *rest):
+    return reduce(operator.gt, (i1, i2) + rest, sentinel=False)
 
 
-@arguments(2)
-def ge(*args):
-    return reduce(operator.ge, args, sentinel=False)
+def ge(i1, i2, *rest):
+    return reduce(operator.ge, (i1, i2) + rest, sentinel=False)
 
 
-@arguments(2)
-def not_eq(*args):
-    return reduce(operator.ne, args, sentinel=False)
+def not_eq(i1, i2, rest):
+    return reduce(operator.ne, (i1, i2) + rest, sentinel=False)
 
 
-@arguments(1)
-def print_(*args):
-    for i in args:
+def print_(i1, *rest):
+    for i in (i1,) + rest:
         print i,
 
     return Nil()
 
 
-@arguments(1)
-def println(*args):
-    for i in args:
+def println(i1, *rest):
+    for i in (i1,) + rest:
         print i,
     print
 
@@ -349,33 +326,29 @@ def input(arg=''):
     return raw_input(arg)
 
 
-@arguments(1)
 def rest(coll):
     return List(coll[1:])
 
 
-@arguments(2)
 def cons(item, coll):
     return List([item] + coll)
 
 
-@arguments(2)
 def concat(coll1, coll2):
     return List(coll1 + coll2)
 
 
-@arguments(4)
 def slice_list(coll, start, end, step=1):
     return List(coll[start:end:step])
 
 
-@arguments(1)
 def is_empty(coll):
     return len(coll) == 0
 
 
 def make_list(*items):
     return List(items)
+
 
 macros = {
     'if': if_macro,
