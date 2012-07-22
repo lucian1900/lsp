@@ -248,6 +248,12 @@ def test_list_slicing():
     assert lsp("(rest '(1 2 3))") == [2, 3]
 
 
+def test_call_method():
+    assert lsp("(. 1 __str__)") == "1"
+    assert lsp("(. 1 __add__ 2)") == 3
+
+
+# Prelude
 def test_reduce():
     assert lsp("(reduce + 0 '(1 2 3))") == 6
 

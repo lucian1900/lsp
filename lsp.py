@@ -3,8 +3,8 @@
 import re
 import sys
 import operator
-from functools import wraps
 from fractions import Fraction
+
 from os.path import join, dirname
 
 
@@ -163,6 +163,8 @@ class defmacro_macro(object):
 class fn_macro(object):
     def __init__(self, body, env):
         first = body[0]
+
+        # Optional name for self call
         if isinstance(first, Symbol):
             self.name = first
             body = body[1:]
@@ -176,6 +178,7 @@ class fn_macro(object):
             raise SyntaxError("Expected argument list, got: {0}".format(
                 first))
 
+        # Rest arguments
         if '&' in self.args:
             i = self.args.index('&')
 
@@ -245,9 +248,15 @@ def do_macro(body, env):
 
 
 def call_method(body, env):
-    if len(body) < 3:
-        raise SyntaxError("method call expects at least 3 parts, got: {0}" \
+    if len(body) < 2:
+        raise SyntaxError("method call expects at least 2 parts, got: {0}" \
             .format(len(body)))
+
+    obj = body[0]
+    meth = body[1]
+    args = body[2:]
+
+    return getattr(obj, meth)(*args)
 
 
 def plus(*nums):
@@ -322,8 +331,8 @@ def println(i1, *rest):
     return Nil()
 
 
-def input(arg=''):
-    return raw_input(arg)
+def input(msg=''):
+    return raw_input(msg)
 
 
 def rest(coll):
@@ -346,6 +355,10 @@ def is_empty(coll):
     return len(coll) == 0
 
 
+def is_nil(item):
+    return Boolean(isinstance(item, Nil))
+
+
 def make_list(*items):
     return List(items)
 
@@ -360,6 +373,7 @@ macros = {
     'unquote-splicing': unquote_splicing_macro,
     'defmacro': defmacro_macro,
     'do': do_macro,
+    '.': call_method,
 }
 
 env = Env({
@@ -380,6 +394,7 @@ env = Env({
 
     # Core
     'apply': apply,
+    'nil?': is_nil,
 
     # Lists
     'list': make_list,
