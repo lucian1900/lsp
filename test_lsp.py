@@ -44,6 +44,10 @@ def test_parse_list():
     assert parse(['(', '(', '1', ')', '(', '2', ')', ')']) == [[1], [2]]
 
 
+def test_parse_vector():
+    assert parse(['[', '1', '2', ']']) == [1, 2]
+
+
 def test_parse_unmatched():
     with raises(SyntaxError):
         assert parse(['('])

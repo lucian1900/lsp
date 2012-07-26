@@ -559,6 +559,8 @@ def lex(source):
         r",": " ",
         r"\(": " ( ",
         r"\)": " ) ",
+        r"\[": " [ ",
+        r"\]": " ] ",
         r"'": " ' ",
         r"`": " ` ",
         # match only if next char isn't @, lookahead so it isn't consumed
