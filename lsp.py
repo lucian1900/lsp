@@ -85,7 +85,7 @@ class Collection(object):
 
 class List(list, Collection):
     start = '('
-    end = ')'
+    stop = ')'
 
     def __repr__(self):
         return '(' + ' '.join(map(str, self)) + ')'
@@ -93,7 +93,7 @@ class List(list, Collection):
 
 class Vector(list, Collection):
     start = '['
-    end = ']'
+    stop = ']'
 
     def __repr__(self):
         return '[' + ' '.join(map(str, self)) + ']'
@@ -486,6 +486,24 @@ def quote_wrap(exp, quoting):
         return exp
 
 
+def parse_coll(kind, tokens, quoting):
+    exp = []
+
+    while True:
+        try:
+            if tokens[0] == kind.stop:
+                break
+        except IndexError:
+            raise SyntaxError("Expected '{0}'".format(kind.stop))
+
+        exp.append(parse(tokens))
+
+    tokens.pop(0)  # Remove ')'
+    exp = kind(exp)
+
+    return quote_wrap(exp, quoting)
+
+
 def parse(tokens):
     if len(tokens) == 0:
         raise SyntaxError("Unexpected EOF")
@@ -509,24 +527,13 @@ def parse(tokens):
 
     # Lists
     if tok == '(':
-        exp = []
+        return parse_coll(List, tokens, quoting)
+    elif tok == '[':
+        return parse_coll(Vector, tokens, quoting)
 
-        while True:
-            try:
-                if tokens[0] == ')':
-                    break
-            except IndexError:
-                raise SyntaxError("Expected ')'")
-
-            exp.append(parse(tokens))
-
-        tokens.pop(0)  # Remove ')'
-        exp = List(exp)
-
-        return quote_wrap(exp, quoting)
-
-    if tok == ')':
-        raise SyntaxError("Unexpected ')'")
+    for i in [List.stop, Vector.stop]:
+        if tok == i:
+            raise SyntaxError("Unexpected '{0}'".format(i))
 
     # Strings
     if len(tok) >= 2 and tok[0] == '"' and tok[-1] == '"':
