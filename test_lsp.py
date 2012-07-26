@@ -71,6 +71,15 @@ def test_read_quote():
     assert read("(= '(1 2) '3)") == read("(= (quote (1 2)) (quote 3))")
 
 
+def test_env():
+    glob = Env({'x': 1})
+    loc = Env({'y': 2}, parent=glob)
+
+    assert glob['x'] == 1
+    assert loc['y'] == 2
+    assert loc['x'] == 1
+
+
 def test_eval_atom():
     assert eval(1) == 1
 
@@ -101,15 +110,6 @@ def test_if():
 def test_def():
     lsp('(def a 1)')
     assert lsp('a') == 1
-
-
-def test_env():
-    glob = Env({'x': 1})
-    loc = Env({'y': 2}, parent=glob)
-
-    assert glob['x'] == 1
-    assert loc['y'] == 2
-    assert loc['x'] == 1
 
 
 def test_fn():

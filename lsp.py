@@ -84,11 +84,17 @@ class Collection(object):
 
 
 class List(list, Collection):
+    start = '('
+    end = ')'
+
     def __repr__(self):
         return '(' + ' '.join(map(str, self)) + ')'
 
 
 class Vector(list, Collection):
+    start = '['
+    end = ']'
+
     def __repr__(self):
         return '[' + ' '.join(map(str, self)) + ']'
 
@@ -99,9 +105,16 @@ class Symbol(str):
 
 
 class Env(dict):
-    def __init__(self, ns, parent=None):
+    def __init__(self, ns, parent=None, macros=None):
         super(Env, self).__init__(ns)
+
+        if parent is not None:
+            macros = parent.macros
+        elif macros is None:
+            macros = {}
+
         self.parent = parent
+        self.macros = macros
 
     def __getitem__(self, key):
         try:
@@ -147,7 +160,7 @@ class defmacro_macro(object):
         self.args = body[1]
         self.body = body[2]
 
-        macros[name] = self
+        env.macros[name] = self
 
     def __call__(self, args, env):
         if len(args) != len(self.args):
@@ -410,7 +423,7 @@ env = Env({
     'println': println,
     'input': input,
     'exit': sys.exit,
-})
+}, macros=macros)
 loc = env
 
 
@@ -419,8 +432,8 @@ def eval(sexp, env=env):
         if len(sexp) == 0:
             raise ValueError("Missing function expression")
 
-        if isinstance(sexp[0], Symbol) and sexp[0] in macros:
-            m = macros[sexp[0]]
+        if isinstance(sexp[0], Symbol) and sexp[0] in env.macros:
+            m = env.macros[sexp[0]]
             return m(sexp[1:], env)
 
         else:
@@ -562,9 +575,12 @@ def read(source):
 def lsp(source, env=env):
     return eval(parse(lex('(do {0})'.format(source))), env=env)
 
-# load prelude
-with open(join(dirname(__file__), 'prelude.lsp')) as f:
-    lsp(f.read())
+
+def init():
+    # load prelude
+    with open(join(dirname(__file__), 'prelude.lsp')) as f:
+        lsp(f.read())
+init()
 
 
 def target(*args):
