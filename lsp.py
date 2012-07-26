@@ -115,6 +115,14 @@ class Map(dict, Collection):
 
         super(Map, self).__init__(pairs(init))
 
+    def __repr__(self):
+        parts = []
+
+        for k, v in self.iteritems():
+            parts.append("{0} {1}".format(k, v))
+
+        return '{' + ', '.join(parts) + '}'
+
 
 class Symbol(str):
     def __repr__(self):
