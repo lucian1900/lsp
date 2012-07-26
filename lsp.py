@@ -99,6 +99,23 @@ class Vector(list, Collection):
         return '[' + ' '.join(map(str, self)) + ']'
 
 
+def pairs(lst):
+    it = iter(lst)
+    while True:
+        yield next(it), next(it)
+
+
+class Map(dict, Collection):
+    start = '{'
+    stop = '}'
+
+    def __init__(self, init=None):
+        if init is None:
+            init = []
+
+        super(Map, self).__init__(pairs(init))
+
+
 class Symbol(str):
     def __repr__(self):
         return self
@@ -525,11 +542,13 @@ def parse(tokens):
     else:
         quoting = None
 
-    # Lists
+    # Lists and Vectors
     if tok == '(':
         return parse_coll(List, tokens, quoting)
     elif tok == '[':
         return parse_coll(Vector, tokens, quoting)
+    elif tok == '{':
+        return parse_coll(Map, tokens, quoting)
 
     for i in [List.stop, Vector.stop]:
         if tok == i:
@@ -561,6 +580,8 @@ def lex(source):
         r"\)": " ) ",
         r"\[": " [ ",
         r"\]": " ] ",
+        r"\{": " { ",
+        r"\}": " } ",
         r"'": " ' ",
         r"`": " ` ",
         # match only if next char isn't @, lookahead so it isn't consumed

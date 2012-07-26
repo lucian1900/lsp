@@ -48,6 +48,12 @@ def test_parse_vector():
     assert parse(['[', '1', '2', ']']) == [1, 2]
 
 
+def test_parse_map():
+    assert parse(['{', '1', '2', '}']) == {1: 2}
+    assert parse(['{', '1', '2', '3', '4', '}']) == {1: 2, 3: 4}
+    assert parse(['{', '1', '2', '3', '}']) == {1: 2}
+
+
 def test_parse_unmatched():
     with raises(SyntaxError):
         assert parse(['('])
