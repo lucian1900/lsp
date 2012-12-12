@@ -626,7 +626,7 @@ def target(*args):
     return main, []
 
 
-def main():
+if __name__ == '__main__':
     if len(sys.argv) == 1:
         while True:
             try:
@@ -643,6 +643,3 @@ def main():
             print "Only -c supported so far"
     else:
         print "Wrong args"
-
-if __name__ == '__main__':
-    main()
