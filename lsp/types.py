@@ -1,4 +1,6 @@
 from fractions import Fraction
+from collections import deque
+from itertools import izip, islice, chain
 
 
 class Atom(object):
@@ -71,18 +73,39 @@ class Collection(object):
         "Even empty collections are truthy"
         return True
 
-    __bool__ = __nonzero__
-
     def __call__(self, index):
         return self[index]
 
+    def __eq__(self, other):
+        for this, that in izip(iter(self), iter(other)):
+            if this != that:
+                return False
 
-class List(list, Collection):
+        return True
+
+
+class List(deque, Collection):
     start = '('
     stop = ')'
 
     def __repr__(self):
         return '(' + ' '.join(map(str, self)) + ')'
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return List(islice(self, key.start, key.stop, key.step))
+
+        return super(List, self).__getitem__(key)
+
+    def index(self, value):
+        for i, e in enumerate(self):
+            if e == value:
+                return i
+
+        return -1
+
+    def __add__(self, other):
+        return List(chain(self, other))
 
 
 class Vector(list, Collection):

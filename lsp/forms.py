@@ -43,7 +43,7 @@ class fn(object):
 
             self.rest_arg = self.args[i + 1]
             if not isinstance(self.rest_arg, Symbol):
-                raise SyntaxError("Expected symbol as rest argument, got: {0}" \
+                raise SyntaxError("Expected symbol as rest argument, got: {0}"\
                     .format(self.rest_arg))
 
             self.args = self.args[:i]
@@ -56,7 +56,7 @@ class fn(object):
     def __call__(self, *args):
         if self.rest_arg is not None:
             if len(args) < len(self.args):
-                raise RuntimeError("Expected at least {0} args, got {1}: {2}" \
+                raise RuntimeError("Expected at least {0} args, got {1}: {2}"\
                     .format(len(self.args), len(args), args))
 
         elif len(args) != len(self.args):
@@ -95,7 +95,7 @@ class defmacro(object):
 
             self.rest_arg = self.args[i + 1]
             if not isinstance(self.rest_arg, Symbol):
-                raise SyntaxError("Expected symbol as rest argument, got: {0}" \
+                raise SyntaxError("Expected symbol as rest argument, got: {0}"\
                     .format(self.rest_arg))
 
             self.args = List(self.args[:i])
@@ -110,7 +110,7 @@ class defmacro(object):
     def __call__(self, args, env):
         if self.rest_arg is not None:
             if len(args) < len(self.args):
-                raise RuntimeError("Expected at least {0} args, got {1}: {2}" \
+                raise RuntimeError("Expected at least {0} args, got {1}: {2}"\
                     .format(len(self.args), len(args), args))
 
         elif len(args) != len(self.args):
@@ -156,7 +156,7 @@ def do(body, env):
 
 def call_method(body, env):
     if len(body) < 2:
-        raise SyntaxError("method call expects at least 2 parts, got: {0}" \
+        raise SyntaxError("method call expects at least 2 parts, got: {0}"\
             .format(len(body)))
 
     obj = body[0]
@@ -212,6 +212,3 @@ def eval_unquote(sexp, env):
             return List(l)
 
     return sexp
-
-
-from lsp.env import top

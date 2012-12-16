@@ -1,5 +1,5 @@
-import pdb
 import operator
+from itertools import islice
 
 from lsp.types import *
 
@@ -89,7 +89,7 @@ def concat(coll1, coll2):
 
 
 def slice_list(coll, start, end, step=1):
-    return List(coll[start:end:step])
+    return List(islice(coll, start, end, step))
 
 
 def is_empty(coll):

@@ -43,12 +43,16 @@ def test_bool():
 
 
 def test_parse_list():
-    assert parse(['(', '1', '2', ')']) == [1, 2]
+    assert parse(['(', '1', '2', ')']) == List([1, 2])
 
-    assert parse(['(', '1', '(', '2', '3', ')', ')']) == [1, [2, 3]]
-    assert parse(['(', '(', '1', '2', ')', '3', ')']) == [[1, 2], 3]
-    assert parse(['(', '1', '(', '2', ')', '3', ')']) == [1, [2], 3]
-    assert parse(['(', '(', '1', ')', '(', '2', ')', ')']) == [[1], [2]]
+    assert parse(['(', '1', '(', '2', '3', ')', ')']) == \
+        List([1, List([2, 3])])
+    assert parse(['(', '(', '1', '2', ')', '3', ')']) == \
+        List([List([1, 2]), 3])
+    assert parse(['(', '1', '(', '2', ')', '3', ')']) == \
+        List([1, List([2]), 3])
+    assert parse(['(', '(', '1', ')', '(', '2', ')', ')']) == \
+        List([List([1]), List([2])])
 
 
 def test_parse_vector():
@@ -67,8 +71,9 @@ def test_parse_unmatched():
 
 
 def test_read_func():
-    assert read('(+ 1 2)') == ['+', 1, 2]
-    assert read('(fn (x) (+ x 1))') == ['fn', ['x'], ['+', 'x', 1]]
+    assert read('(+ 1 2)') == List(['+', 1, 2])
+    assert read('(fn (x) (+ x 1))') == \
+        List(['fn', List(['x']), List(['+', 'x', 1])])
 
 
 def test_repr():
@@ -134,8 +139,9 @@ def test_fn():
     assert lsp('((fn (x) x) 1)') == 1
     assert lsp('((fn (x) (+ x 1)) 1)') == 2
 
-    assert read('(fn (x & xs) xs)') == ['fn', ['x', '&', 'xs'], 'xs']
-    assert lsp('((fn (x & xs) xs) 1 2 3 4)') == [2, 3, 4]
+    assert read('(fn (x & xs) xs)') == \
+        List(['fn', List(['x', '&', 'xs']), 'xs'])
+    assert lsp('((fn (x & xs) xs) 1 2 3 4)') == List([2, 3, 4])
 
 
 def test_defn():
@@ -144,14 +150,14 @@ def test_defn():
 
 
 def test_quote():
-    assert lsp('(quote (+))') == ['+']
-    assert lsp("'(+)") == ['+']
+    assert lsp('(quote (+))') == List(['+'])
+    assert lsp("'(+)") == List(['+'])
 
-    assert lsp('(quote (1 2))') == [1, 2]
-    assert lsp("'(1 2)") == [1, 2]
+    assert lsp('(quote (1 2))') == List([1, 2])
+    assert lsp("'(1 2)") == List([1, 2])
 
-    assert lsp("'((1 2))") == [[1, 2]]
-    assert lsp("'((1 2) (1 2))") == [[1, 2], [1, 2]]
+    assert lsp("'((1 2))") == List([List([1, 2])])
+    assert lsp("'((1 2) (1 2))") == List([List([1, 2]), List([1, 2])])
 
 
 def test_quasiquote():
@@ -259,24 +265,24 @@ def test_fact():
     assert lsp('({0} 5)'.format(fact)) == 120
 
 
-def test_list_slicing():
-    assert lsp("('(1 2 3) 0)") == 1
-    assert lsp("(first '(1 2 3))") == 1
-    assert lsp("(rest '(1 2 3))") == [2, 3]
-
-
 def test_call_method():
     assert lsp("(. 1 __str__)") == "1"
     assert lsp("(. 1 __add__ 2)") == 3
 
 
 # Prelude
+def test_list_slicing():
+    assert lsp("('(1 2 3) 0)") == 1
+    assert lsp("(first '(1 2 3))") == 1
+    assert lsp("(rest '(1 2 3))") == List([2, 3])
+
+
 def test_reduce():
     assert lsp("(reduce + 0 '(1 2 3))") == 6
 
 
 def test_map():
-    assert lsp("(map inc '(1 2 3))") == [2, 3, 4]
+    assert lsp("(map inc '(1 2 3))") == List([2, 3, 4])
 
 
 def test_let():
@@ -285,7 +291,7 @@ def test_let():
 
 
 def test_filter():
-    assert lsp("(filter (fn (x) (> x 2)) '(1 2 3 4))") == [3, 4]
+    assert lsp("(filter (fn (x) (> x 2)) '(1 2 3 4))") == List([3, 4])
 
 
 def test_comp():
@@ -297,5 +303,5 @@ def test_partial():
 
 
 def test_range():
-    assert lsp("(range 1 5)") == [1, 2, 3, 4]
-    assert lsp("(range 1 5 2)") == [1, 3]
+    assert lsp("(range 1 5)") == List([1, 2, 3, 4])
+    assert lsp("(range 1 5 2)") == List([1, 3])
