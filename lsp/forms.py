@@ -1,54 +1,25 @@
 from lsp.types import *
 
 
-def if_macro(body, env):
+def if_(body, env):
     if eval(body[0], env):
         return eval(body[1], env)
     else:
         return eval(body[2], env)
 
 
-def def_macro(body, env):
-    if not isinstance(body[0], Symbol):
-        raise SyntaxError("Expected symbol, got {0}".format(body[0]))
-
+def def_(body, env):
     name = body[0]
-    val = eval(body[1], env)
+    if not isinstance(name, Symbol):
+        raise SyntaxError("Expected symbol, got {0}".format(name))
 
+    val = eval(body[1], env)
     env[name] = eval(val, env)
 
     return val
 
 
-class defmacro_macro(object):
-    def __init__(self, body, env):
-        self.env = env
-
-        if not isinstance(body[0], Symbol):
-            raise SyntaxError("Expected symbol, got {0}".format(body[0]))
-
-        name = body[0]
-
-        if not isinstance(body[1], List):
-            raise SyntaxError("Expected argument list, got {0}".format(body[1]))
-
-        self.args = body[1]
-        self.body = body[2]
-
-        env.macros[name] = self
-
-    def __call__(self, args, env):
-        if len(args) != len(self.args):
-            raise SyntaxError("Expected {0} args, got {1}: {2}".format(
-                len(self.args), len(args), args))
-
-        return eval(eval(self.body,
-                        Env(zip(self.args, args),
-                            parent=self.env)),
-                    env)
-
-
-class fn_macro(object):
+class fn(object):
     def __init__(self, body, env):
         first = body[0]
 
@@ -106,29 +77,77 @@ class fn_macro(object):
         return '<lsp.lambda object at {0}>'.format(hex(id(self)))
 
 
-def quote_macro(body, env):
+class defmacro(object):
+    def __init__(self, body, env):
+        name = body[0]
+        if not isinstance(name, Symbol):
+            raise SyntaxError("Expected symbol, got {0}".format(name))
+
+        args = body[1]
+        if isinstance(args, List):
+            self.args = args
+        else:
+            raise SyntaxError("Expected argument list, got: {0}".format(args))
+
+        # Rest arguments
+        if '&' in self.args:
+            i = self.args.index('&')
+
+            self.rest_arg = self.args[i + 1]
+            if not isinstance(self.rest_arg, Symbol):
+                raise SyntaxError("Expected symbol as rest argument, got: {0}" \
+                    .format(self.rest_arg))
+
+            self.args = List(self.args[:i])
+        else:
+            self.rest_arg = None
+
+        self.body = body[2]
+        self.env = env
+
+        env.macros[name] = self
+
+    def __call__(self, args, env):
+        if self.rest_arg is not None:
+            if len(args) < len(self.args):
+                raise RuntimeError("Expected at least {0} args, got {1}: {2}" \
+                    .format(len(self.args), len(args), args))
+
+        elif len(args) != len(self.args):
+            raise RuntimeError("Expected {0} args, got {1}: {2}".format(
+                len(self.args), len(args), args))
+
+        loc = Env(zip(self.args, args), parent=self.env)
+
+        if self.rest_arg is not None:
+            loc[self.rest_arg] = List(args[len(self.args):])
+
+        return eval(eval(self.body, loc), env)
+
+
+def quote(body, env):
     if len(body) != 1:
         raise SyntaxError("quote expects 1 part")
 
     return body[0]
 
 
-def quasiquote_macro(body, env):
+def quasiquote(body, env):
     if len(body) != 1:
         raise SyntaxError("quasiquote expects 1 part")
 
     return eval_unquote(body[0], env)
 
 
-def unquote_macro(body, env):
+def unquote(body, env):
     raise SyntaxError("unquote only valid in quasiquote")
 
 
-def unquote_splicing_macro(body, env):
+def unquote_splicing(body, env):
     raise SyntaxError("unquote-splicing only valid in quasiquote")
 
 
-def do_macro(body, env):
+def do(body, env):
     for i in body:
         result = eval(i, env)
 
@@ -157,7 +176,7 @@ def eval(sexp, env):
             return m(sexp[1:], env)
 
         else:
-            vals = [eval(i, env) for i in sexp]
+            vals = List(eval(i, env) for i in sexp)
             fun = vals[0]
 
             if not hasattr(fun, '__call__'):

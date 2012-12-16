@@ -1,4 +1,5 @@
 import sys
+import pdb
 import operator
 from functools import partial
 
@@ -39,16 +40,19 @@ top = Env({
     'println': println,
     'input': input,
     'exit': sys.exit,
+
+    'debugger': pdb.set_trace,
 }, macros={
-    'if': if_macro,
-    'fn': fn_macro,
-    'def': def_macro,
-    'quote': quote_macro,
-    'quasiquote': quasiquote_macro,
-    'unquote': unquote_macro,
-    'unquote-splicing': unquote_splicing_macro,
-    'defmacro': defmacro_macro,
-    'do': do_macro,
+    # Special forms
+    'if': if_,
+    'fn': fn,
+    'def': def_,
+    'quote': quote,
+    'quasiquote': quasiquote,
+    'unquote': unquote,
+    'unquote-splicing': unquote_splicing,
+    'defmacro': defmacro,
+    'do': do,
     '.': call_method,
 })
 

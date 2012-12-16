@@ -1,11 +1,15 @@
 from fractions import Fraction
+from functools import partial
 
 from py.test import raises
 
 from lsp.parser import lex, parse, read
-from lsp.inter import eval, lsp
+from lsp.forms import eval
 from lsp.types import Symbol, List, Nil, Env
 from lsp.env import top
+from lsp import lsp
+
+eval = partial(eval, env=top)
 
 
 def test_lex():
