@@ -23,6 +23,9 @@
 (defn second (coll)
   (coll 1))
 
+(defn rest (coll)
+  (slice coll 1 (len coll)))
+
 (defn reduce (fun acc coll)
   (if (empty? coll)
     acc

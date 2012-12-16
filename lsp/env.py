@@ -28,7 +28,6 @@ top = Env({
 
     # Lists
     'list': make_list,
-    'rest': rest,
     'cons': cons,
     'concat': concat,
     'empty?': is_empty,

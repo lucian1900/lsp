@@ -79,10 +79,6 @@ def input(msg=''):
     return raw_input(msg)
 
 
-def rest(coll):
-    return List(coll[1:])
-
-
 def cons(item, coll):
     return List([item] + coll)
 
